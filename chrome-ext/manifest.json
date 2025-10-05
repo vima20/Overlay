@@ -1,0 +1,22 @@
+{
+  "manifest_version": 3,
+  "name": "Areena Overlay",
+  "version": "1.0.0",
+  "description": "Live jalkapallotulokset Yle Areenan päälle (Ctrl+K/Esc).",
+  "background": {
+    "service_worker": "background.js"
+  },
+  "content_scripts": [
+    {
+      "matches": ["https://areena.yle.fi/*"],
+      "js": ["content.js"],
+      "run_at": "document_idle"
+    }
+  ],
+  "permissions": [
+    "activeTab"
+  ],
+  "host_permissions": [
+    "https://api.football-data.org/*"
+  ]
+}
