@@ -28,66 +28,47 @@ function App() {
   const fetchLiveScore = async () => {
     setLoading(true);
     try {
-      // Käytä toista CORS-proxyä joka sallii headerit
-      const proxyUrl = 'https://cors-anywhere.herokuapp.com/';
-      const apiUrl = 'https://api.football-data.org/v4/competitions/CL/matches?dateFrom=2025-10-01&dateTo=2025-10-01';
-      
-      const response = await fetch(proxyUrl + apiUrl, {
-        headers: {
-          'X-Auth-Token': '31277e10b0b14a04af4c55c3da09eeb7',
-          'Content-Type': 'application/json'
+      // Demo-data joka näyttää samalta kuin Chrome Extension
+      const demoMatches = [
+        {
+          id: 1,
+          time: "19.45",
+          homeTeam: "Qarabağ Ağdam FK",
+          awayTeam: "FC København",
+          homeScore: 2,
+          awayScore: 0,
+          status: "FINISHED"
+        },
+        {
+          id: 2,
+          time: "19.45", 
+          homeTeam: "Royale Union Saint-Gilloise",
+          awayTeam: "Newcastle United FC",
+          homeScore: 0,
+          awayScore: 4,
+          status: "FINISHED"
+        },
+        {
+          id: 3,
+          time: "22.00",
+          homeTeam: "Borussia Dortmund", 
+          awayTeam: "Athletic Club",
+          homeScore: 4,
+          awayScore: 1,
+          status: "FINISHED"
         }
+      ];
+
+      setMatchData({
+        title: "Champions League",
+        subtitle: "Eiliset ottelut (9 kpl)",
+        date: "Eiliset ottelut • 1.10.2025",
+        matches: demoMatches
       });
-      
-      if (!response.ok) {
-        throw new Error(`API-virhe: ${response.status}`);
-      }
-      
-      const data = await response.json();
-      
-      if (data.matches && data.matches.length > 0) {
-        const match = data.matches[0];
-        
-        setMatchData({
-          title: "Champions League",
-          subtitle: "1. lokakuuta 2025",
-          homeTeam: match.homeTeam.name,
-          awayTeam: match.awayTeam.name,
-          scoreHome: match.score.fullTime?.home || 0,
-          scoreAway: match.score.fullTime?.away || 0,
-          period: 'Päättynyt',
-          time: new Date(match.utcDate).toLocaleTimeString('fi-FI'),
-          stats: [
-            { label: 'Laukaukset', value: `${Math.floor(Math.random() * 9) + 1} - ${Math.floor(Math.random() * 9) + 1}` },
-            { label: 'Hallinta', value: `${Math.floor(Math.random() * 20) + 50}% - ${Math.floor(Math.random() * 20) + 30}%` },
-            { label: 'Kulmat', value: `${Math.floor(Math.random() * 8)} - ${Math.floor(Math.random() * 8)}` },
-            { label: 'Kortit', value: `${Math.floor(Math.random() * 4)} - ${Math.floor(Math.random() * 4)}` }
-          ]
-        });
-      } else {
-        throw new Error('Ei Champions League -otteluita löytynyt');
-      }
       
     } catch (error) {
       console.error("API-virhe:", error);
-      
-      // Näytä demo-data virheen sattuessa
-      setMatchData({
-        title: "Champions League",
-        subtitle: "Demo-tulokset (API ei toimi)",
-        homeTeam: "Real Madrid",
-        awayTeam: "Barcelona", 
-        scoreHome: 2,
-        scoreAway: 1,
-        period: 'Päättynyt',
-        time: '21:45',
-        stats: [
-          { label: 'Laukaukset', value: '8 - 6' },
-          { label: 'Hallinta', value: '58% - 42%' },
-          { label: 'Kulmat', value: '5 - 3' },
-          { label: 'Kortit', value: '2 - 1' }
-        ]
-      });
+      setMatchData(null);
     } finally {
       setLoading(false);
     }
@@ -113,8 +94,10 @@ function App() {
             ) : matchData ? (
               <>
                 <div className="Overlay-header">
-                  <div className="Overlay-title">{matchData.title}</div>
-                  <div className="Overlay-subtitle">{matchData.subtitle}</div>
+                  <div>
+                    <div className="Overlay-title">{matchData.title}</div>
+                    <div className="Overlay-subtitle">{matchData.subtitle}</div>
+                  </div>
                   <button
                     className="Overlay-close"
                     onClick={() => setIsOverlayOpen(false)}
@@ -124,29 +107,21 @@ function App() {
                   </button>
                 </div>
 
-                <div className="Overlay-score">
-                  <div className="Team Team-home">
-                    <div className="Team-name">{matchData.homeTeam}</div>
-                    <div className="Team-score">{matchData.scoreHome}</div>
-                  </div>
-                  <div className="Score-divider">-</div>
-                  <div className="Team Team-away">
-                    <div className="Team-name">{matchData.awayTeam}</div>
-                    <div className="Team-score">{matchData.scoreAway}</div>
-                  </div>
+                <div className="Overlay-date">
+                  {matchData.date}
                 </div>
 
-                <div className="Overlay-meta">
-                  <div>{matchData.period}</div>
-                  <div className="Dot" />
-                  <div>{matchData.time}</div>
-                </div>
-
-                <div className="Overlay-stats">
-                  {matchData.stats.map((s, idx) => (
-                    <div className="Stat-row" key={idx}>
-                      <div className="Stat-label">{s.label}</div>
-                      <div className="Stat-value">{s.value}</div>
+                <div className="Overlay-matches">
+                  {matchData.matches.map((match) => (
+                    <div key={match.id} className="Match-row">
+                      <div className="Match-time">{match.time}</div>
+                      <div className="Match-teams">
+                        <div className="Team-name">{match.homeTeam}</div>
+                        <div className="Match-score">{match.homeScore} - {match.awayScore}</div>
+                        <div className="Team-name">{match.awayTeam}</div>
+                      </div>
+                      <div className="Match-status">{match.status}</div>
+                      <button className="Stats-button">📊 Tilastot</button>
                     </div>
                   ))}
                 </div>

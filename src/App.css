@@ -53,9 +53,11 @@
   background: rgba(18, 20, 23, 0.85);
   color: #fff;
   width: min(720px, 92vw);
+  max-height: 80vh;
   border-radius: 12px;
   box-shadow: 0 4px 15px rgba(0,0,0,0.2);
   border: 1px solid rgba(255,255,255,0.08);
+  overflow-y: auto;
 }
 
 .Overlay-header {
@@ -85,70 +87,72 @@
   line-height: 1;
 }
 
-.Overlay-score {
-  display: grid;
-  grid-template-columns: 1fr auto 1fr;
+.Overlay-date {
+  padding: 12px 20px;
+  border-bottom: 1px solid rgba(255,255,255,0.08);
+  font-size: 14px;
+  opacity: 0.9;
+}
+
+.Overlay-matches {
+  padding: 0;
+}
+
+.Match-row {
+  display: flex;
+  align-items: center;
+  padding: 16px 20px;
+  border-bottom: 1px solid rgba(255,255,255,0.05);
+  gap: 12px;
+}
+
+.Match-time {
+  font-size: 14px;
+  opacity: 0.8;
+  min-width: 50px;
+}
+
+.Match-teams {
+  flex: 1;
+  display: flex;
   align-items: center;
   gap: 12px;
-  padding: 20px;
 }
 
 .Team-name {
-  font-size: 16px;
+  font-size: 14px;
   opacity: 0.9;
+  flex: 1;
 }
 
-.Team-score {
-  font-size: 42px;
-  font-weight: 800;
+.Match-score {
+  font-size: 16px;
+  font-weight: 600;
+  min-width: 60px;
+  text-align: center;
 }
 
-.Score-divider {
-  font-size: 32px;
+.Match-status {
+  font-size: 12px;
   opacity: 0.7;
+  min-width: 80px;
 }
 
-.Overlay-meta {
+.Stats-button {
+  background: #4aa3ff;
+  border: none;
+  color: white;
+  padding: 6px 12px;
+  border-radius: 6px;
+  font-size: 12px;
+  cursor: pointer;
   display: flex;
   align-items: center;
-  justify-content: center;
-  gap: 10px;
-  padding: 0 20px 10px;
-  opacity: 0.9;
+  gap: 4px;
 }
 
-.Dot {
-  width: 6px;
-  height: 6px;
-  border-radius: 50%;
-  background: #4aa3ff;
-}
-
-.Overlay-stats {
-  padding: 10px 20px 20px;
-  display: grid;
-  grid-template-columns: 1fr auto;
-  row-gap: 10px;
-}
-
-.Stat-row {
-  display: contents;
-}
-
-.Stat-label {
-  text-align: left;
-  opacity: 0.9;
-}
-
-.Stat-value {
-  text-align: right;
-  font-weight: 600;
-}
-
-.Hint {
-  margin-top: 16px;
-  opacity: 0.8;
-  font-size: 14px;
+.Stats-button:hover {
+  background: #3a8ce6;
 }
 
 .Loading, .Error {
