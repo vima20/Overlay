@@ -6,8 +6,17 @@ export default async function handler(req, res) {
   try {
     const API_KEY = '31277e10b0b14a04af4c55c3da09eeb7';
     
-    // Hae Champions League -ottelut
-    const response = await fetch('https://api.football-data.org/v4/competitions/CL/matches?dateFrom=2025-10-01&dateTo=2025-10-01', {
+    // Hae menneitä Champions League -otteluita
+    const today = new Date();
+    const yesterday = new Date(today);
+    yesterday.setDate(yesterday.getDate() - 1);
+    
+    const dateFrom = yesterday.toISOString().split('T')[0];
+    const dateTo = yesterday.toISOString().split('T')[0];
+    
+    console.log('Haetaan otteluita päivältä:', dateFrom);
+    
+    const response = await fetch(`https://api.football-data.org/v4/competitions/CL/matches?dateFrom=${dateFrom}&dateTo=${dateTo}`, {
       headers: {
         'X-Auth-Token': API_KEY,
         'Content-Type': 'application/json'
@@ -19,6 +28,8 @@ export default async function handler(req, res) {
     }
 
     const data = await response.json();
+    
+    console.log('API-vastaus:', data);
     
     res.status(200).json(data);
   } catch (error) {
