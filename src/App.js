@@ -27,8 +27,9 @@ function App() {
 
   const fetchLiveScore = async () => {
     setLoading(true);
-    try {
-      // Demo-data joka näyttää samalta kuin Chrome Extension
+    
+    // Käytä vain demo-dataa (ei API-kutsuja)
+    setTimeout(() => {
       const demoMatches = [
         {
           id: 1,
@@ -56,6 +57,24 @@ function App() {
           homeScore: 4,
           awayScore: 1,
           status: "FINISHED"
+        },
+        {
+          id: 4,
+          time: "19.45",
+          homeTeam: "Real Madrid",
+          awayTeam: "Barcelona",
+          homeScore: 3,
+          awayScore: 1,
+          status: "FINISHED"
+        },
+        {
+          id: 5,
+          time: "22.00",
+          homeTeam: "Manchester City",
+          awayTeam: "Liverpool",
+          homeScore: 2,
+          awayScore: 2,
+          status: "FINISHED"
         }
       ];
 
@@ -66,12 +85,8 @@ function App() {
         matches: demoMatches
       });
       
-    } catch (error) {
-      console.error("API-virhe:", error);
-      setMatchData(null);
-    } finally {
       setLoading(false);
-    }
+    }, 1000); // 1 sekunnin viive simuloidakseen latausta
   };
 
   return (
