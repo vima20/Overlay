@@ -85,6 +85,7 @@
   font-size: 24px;
   cursor: pointer;
   line-height: 1;
+  padding: 8px;
 }
 
 .Overlay-date {
@@ -149,28 +150,16 @@
   display: flex;
   align-items: center;
   gap: 4px;
+  transition: background-color 0.2s;
 }
 
 .Stats-button:hover {
   background: #3a8ce6;
 }
 
-.Loading, .Error {
-  padding: 40px;
-  text-align: center;
-  font-size: 18px;
-  color: #fff;
+.Stats-button:active {
+  background: #2a7bd6;
 }
-
-.Loading {
-  opacity: 0.8;
-}
-
-.Error {
-  color: #ff6b6b;
-}
-
-/* Lisää olemassa oleviin tyyleihin */
 
 .Overlay-score {
   display: grid;
@@ -223,4 +212,19 @@
   text-align: right;
   font-weight: 600;
   padding: 8px 0;
+}
+
+.Loading, .Error {
+  padding: 40px;
+  text-align: center;
+  font-size: 18px;
+  color: #fff;
+}
+
+.Loading {
+  opacity: 0.8;
+}
+
+.Error {
+  color: #ff6b6b;
 }
