@@ -28,16 +28,13 @@ function App() {
   const fetchLiveScore = async () => {
     setLoading(true);
     try {
-      const API_KEY = '31277e10b0b14a04af4c55c3da09eeb7';
+      // Käytä toista CORS-proxyä joka sallii headerit
+      const proxyUrl = 'https://cors-anywhere.herokuapp.com/';
+      const apiUrl = 'https://api.football-data.org/v4/competitions/CL/matches?dateFrom=2025-10-01&dateTo=2025-10-01';
       
-      // Käytä CORS-proxyä
-      const proxyUrl = 'https://api.allorigins.win/raw?url=';
-      const apiUrl = 'https://api.football-data.org/v4/matches?status=LIVE';
-      const fullUrl = proxyUrl + encodeURIComponent(apiUrl);
-      
-      const response = await fetch(fullUrl, {
+      const response = await fetch(proxyUrl + apiUrl, {
         headers: {
-          'X-Auth-Token': API_KEY,
+          'X-Auth-Token': '31277e10b0b14a04af4c55c3da09eeb7',
           'Content-Type': 'application/json'
         }
       });
@@ -52,14 +49,14 @@ function App() {
         const match = data.matches[0];
         
         setMatchData({
-          title: "Live Score",
-          subtitle: match.competition.name,
+          title: "Champions League",
+          subtitle: "1. lokakuuta 2025",
           homeTeam: match.homeTeam.name,
           awayTeam: match.awayTeam.name,
           scoreHome: match.score.fullTime?.home || 0,
           scoreAway: match.score.fullTime?.away || 0,
-          period: 'Käynnissä',
-          time: new Date().toLocaleTimeString('fi-FI'),
+          period: 'Päättynyt',
+          time: new Date(match.utcDate).toLocaleTimeString('fi-FI'),
           stats: [
             { label: 'Laukaukset', value: `${Math.floor(Math.random() * 9) + 1} - ${Math.floor(Math.random() * 9) + 1}` },
             { label: 'Hallinta', value: `${Math.floor(Math.random() * 20) + 50}% - ${Math.floor(Math.random() * 20) + 30}%` },
@@ -68,23 +65,7 @@ function App() {
           ]
         });
       } else {
-        // Jos ei live-otteluita, näytä demo-data
-        setMatchData({
-          title: "Champions League",
-          subtitle: "1. lokakuuta 2025",
-          homeTeam: "Real Madrid",
-          awayTeam: "Barcelona",
-          scoreHome: 2,
-          scoreAway: 1,
-          period: 'Päättynyt',
-          time: '21:45',
-          stats: [
-            { label: 'Laukaukset', value: '8 - 6' },
-            { label: 'Hallinta', value: '58% - 42%' },
-            { label: 'Kulmat', value: '5 - 3' },
-            { label: 'Kortit', value: '2 - 1' }
-          ]
-        });
+        throw new Error('Ei Champions League -otteluita löytynyt');
       }
       
     } catch (error) {
@@ -93,7 +74,7 @@ function App() {
       // Näytä demo-data virheen sattuessa
       setMatchData({
         title: "Champions League",
-        subtitle: "Demo-tulokset",
+        subtitle: "Demo-tulokset (API ei toimi)",
         homeTeam: "Real Madrid",
         awayTeam: "Barcelona", 
         scoreHome: 2,
