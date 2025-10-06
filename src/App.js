@@ -65,33 +65,12 @@ function App() {
     } catch (error) {
       console.error("API-virhe:", error);
       
-      // Fallback demo-data
-      const demoMatches = [
-        {
-          id: 1,
-          time: "19.45",
-          homeTeam: "Qarabağ Ağdam FK",
-          awayTeam: "FC København",
-          homeScore: 2,
-          awayScore: 0,
-          status: "FINISHED"
-        },
-        {
-          id: 2,
-          time: "19.45", 
-          homeTeam: "Royale Union Saint-Gilloise",
-          awayTeam: "Newcastle United FC",
-          homeScore: 0,
-          awayScore: 4,
-          status: "FINISHED"
-        }
-      ];
-
+      // Näytä virheviesti demo-datan sijaan
       setMatchData({
         title: "Champions League",
-        subtitle: "Demo-tulokset (API ei toimi)",
+        subtitle: "API-virhe",
         date: "Eiliset ottelut • 1.10.2025",
-        matches: demoMatches
+        matches: []
       });
     } finally {
       setLoading(false);
@@ -145,25 +124,31 @@ function App() {
                       {matchData.date}
                     </div>
 
-                    <div className="Overlay-matches">
-                      {matchData.matches.map((match) => (
-                        <div key={match.id} className="Match-row">
-                          <div className="Match-time">{match.time}</div>
-                          <div className="Match-teams">
-                            <div className="Team-name">{match.homeTeam}</div>
-                            <div className="Match-score">{match.homeScore} - {match.awayScore}</div>
-                            <div className="Team-name">{match.awayTeam}</div>
+                    {matchData.matches.length > 0 ? (
+                      <div className="Overlay-matches">
+                        {matchData.matches.map((match) => (
+                          <div key={match.id} className="Match-row">
+                            <div className="Match-time">{match.time}</div>
+                            <div className="Match-teams">
+                              <div className="Team-name">{match.homeTeam}</div>
+                              <div className="Match-score">{match.homeScore} - {match.awayScore}</div>
+                              <div className="Team-name">{match.awayTeam}</div>
+                            </div>
+                            <div className="Match-status">{match.status}</div>
+                            <button 
+                              className="Stats-button"
+                              onClick={() => showMatchStats(match)}
+                            >
+                              📊 Tilastot
+                            </button>
                           </div>
-                          <div className="Match-status">{match.status}</div>
-                          <button 
-                            className="Stats-button"
-                            onClick={() => showMatchStats(match)}
-                          >
-                            📊 Tilastot
-                          </button>
-                        </div>
-                      ))}
-                    </div>
+                        ))}
+                      </div>
+                    ) : (
+                      <div className="Error">
+                        Ei otteluita saatavilla. Tarkista API-yhteys.
+                      </div>
+                    )}
                   </>
                 ) : (
                   <>
