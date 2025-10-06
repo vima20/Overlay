@@ -65,7 +65,7 @@ function App() {
     } catch (error) {
       console.error("API-virhe:", error);
       
-      // Näytä virheviesti demo-datan sijaan
+      // Näytä virheviesti
       setMatchData({
         title: "Champions League",
         subtitle: "API-virhe",
