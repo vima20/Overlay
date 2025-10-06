@@ -43,8 +43,8 @@ function App() {
       if (data.matches && data.matches.length > 0) {
         setMatchData({
           title: "Champions League",
-          subtitle: `Eiliset ottelut (${data.matches.length} kpl)`,
-          date: "Eiliset ottelut • 1.10.2025",
+          subtitle: `Ottelut (${data.matches.length} kpl)`,
+          date: "1.10.2025",
           matches: data.matches.map(match => ({
             id: match.id,
             time: new Date(match.utcDate).toLocaleTimeString('fi-FI', { 
@@ -69,7 +69,7 @@ function App() {
       setMatchData({
         title: "Champions League",
         subtitle: "API-virhe",
-        date: "Eiliset ottelut • 1.10.2025",
+        date: "1.10.2025",
         matches: []
       });
     } finally {
@@ -77,8 +77,53 @@ function App() {
     }
   };
 
+  // Funktio realististen tilastojen generointiin
+  const generateRealisticStats = () => {
+    const homeShots = Math.floor(Math.random() * 9) + 1;
+    const awayShots = Math.floor(Math.random() * 9) + 1;
+    
+    let homePossession, awayPossession;
+    if (homeShots > awayShots) {
+      homePossession = Math.floor(Math.random() * 20) + 50;
+      awayPossession = 100 - homePossession;
+    } else if (awayShots > homeShots) {
+      awayPossession = Math.floor(Math.random() * 20) + 50;
+      homePossession = 100 - awayPossession;
+    } else {
+      homePossession = Math.floor(Math.random() * 10) + 45;
+      awayPossession = 100 - homePossession;
+    }
+    
+    const homeCorners = Math.floor(Math.random() * homeShots);
+    const awayCorners = Math.floor(Math.random() * awayShots);
+    
+    const homeCards = Math.floor(Math.random() * 4);
+    const awayCards = Math.floor(Math.random() * 4);
+    
+    const homeSaves = Math.floor(Math.random() * 5) + 1;
+    const awaySaves = Math.floor(Math.random() * 5) + 1;
+    
+    const homeFouls = Math.floor(Math.random() * 8) + 2;
+    const awayFouls = Math.floor(Math.random() * 8) + 2;
+
+    return [
+      { label: 'Laukaukset', value: `${homeShots} - ${awayShots}` },
+      { label: 'Pallon hallinta', value: `${homePossession}% - ${awayPossession}%` },
+      { label: 'Kulmat', value: `${homeCorners} - ${awayCorners}` },
+      { label: 'Kortit', value: `${homeCards} - ${awayCards}` },
+      { label: 'Torjunnat', value: `${homeSaves} - ${awaySaves}` },
+      { label: 'Vaparit', value: `${homeFouls} - ${awayFouls}` }
+    ];
+  };
+
   const showMatchStats = (match) => {
-    setSelectedMatch(match);
+    const generatedStats = generateRealisticStats();
+    setSelectedMatch({
+      ...match,
+      subtitle: "Tilastot (Generoidut tilastot (realistiset))",
+      time: new Date().toLocaleTimeString('fi-FI', { hour: '2-digit', minute: '2-digit', second: '2-digit' }),
+      stats: generatedStats
+    });
   };
 
   const goBackToList = () => {
@@ -151,64 +196,55 @@ function App() {
                     )}
                   </>
                 ) : (
-                  <>
-                    <div className="Overlay-header">
-                      <div>
-                        <div className="Overlay-title">{selectedMatch.homeTeam} vs {selectedMatch.awayTeam}</div>
-                        <div className="Overlay-subtitle">Tilastot</div>
-                      </div>
-                      <button
-                        className="Overlay-close"
-                        onClick={goBackToList}
-                        aria-label="Takaisin"
-                      >
-                        ← Takaisin
-                      </button>
-                    </div>
-
-                    <div className="Overlay-score">
-                      <div className="Team Team-home">
-                        <div className="Team-name">{selectedMatch.homeTeam}</div>
-                        <div className="Team-score">{selectedMatch.homeScore}</div>
-                      </div>
-                      <div className="Score-divider">-</div>
-                      <div className="Team Team-away">
-                        <div className="Team-name">{selectedMatch.awayTeam}</div>
-                        <div className="Team-score">{selectedMatch.awayScore}</div>
-                      </div>
-                    </div>
-
-                    <div className="Overlay-stats">
-                      <div className="Stat-row">
-                        <div className="Stat-label">Laukaukset</div>
-                        <div className="Stat-value">{Math.floor(Math.random() * 9) + 1} - {Math.floor(Math.random() * 9) + 1}</div>
-                      </div>
-                      <div className="Stat-row">
-                        <div className="Stat-label">Pallon hallinta</div>
-                        <div className="Stat-value">{Math.floor(Math.random() * 20) + 50}% - {Math.floor(Math.random() * 20) + 30}%</div>
-                      </div>
-                      <div className="Stat-row">
-                        <div className="Stat-label">Kulmat</div>
-                        <div className="Stat-value">{Math.floor(Math.random() * 8)} - {Math.floor(Math.random() * 8)}</div>
-                      </div>
-                      <div className="Stat-row">
-                        <div className="Stat-label">Kortit</div>
-                        <div className="Stat-value">{Math.floor(Math.random() * 4)} - {Math.floor(Math.random() * 4)}</div>
-                      </div>
-                      <div className="Stat-row">
-                        <div className="Stat-label">Torjunnat</div>
-                        <div className="Stat-value">{Math.floor(Math.random() * 5) + 1} - {Math.floor(Math.random() * 5) + 1}</div>
-                      </div>
-                      <div className="Stat-row">
-                        <div className="Stat-label">Vaparit</div>
-                        <div className="Stat-value">{Math.floor(Math.random() * 8) + 2} - {Math.floor(Math.random() * 8) + 2}</div>
-                      </div>
-                    </div>
-                  </>
+                  <div className="Error">Virhe Champions League -tietojen lataamisessa</div>
                 )}
               </>
             ) : (
               <div className="Error">Virhe Champions League -tietojen lataamisessa</div>
+            )}
+
+            {selectedMatch && (
+              <>
+                <div className="Overlay-header">
+                  <div>
+                    <div className="Overlay-title">{selectedMatch.homeTeam} vs {selectedMatch.awayTeam}</div>
+                    <div className="Overlay-subtitle">{selectedMatch.subtitle}</div>
+                  </div>
+                  <button
+                    className="Back-button"
+                    onClick={goBackToList}
+                    aria-label="Takaisin"
+                  >
+                    ← Takaisin
+                  </button>
+                </div>
+
+                <div className="Overlay-score-section">
+                  <div className="Overlay-score">
+                    <div className="Team Team-home">
+                      <div className="Team-name">{selectedMatch.homeTeam}</div>
+                      <div className="Team-score">{selectedMatch.homeScore}</div>
+                    </div>
+                    <div className="Score-divider">-</div>
+                    <div className="Team Team-away">
+                      <div className="Team-name">{selectedMatch.awayTeam}</div>
+                      <div className="Team-score">{selectedMatch.awayScore}</div>
+                    </div>
+                  </div>
+                  <div className="Overlay-timestamp">
+                    Tilastot • {selectedMatch.time}
+                  </div>
+                </div>
+
+                <div className="Overlay-stats">
+                  {selectedMatch.stats.map((stat, index) => (
+                    <div key={index} className="Stat-row">
+                      <div className="Stat-label">{stat.label}</div>
+                      <div className="Stat-value">{stat.value}</div>
+                    </div>
+                  ))}
+                </div>
+              </>
             )}
           </div>
         </div>
