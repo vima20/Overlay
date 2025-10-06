@@ -4,17 +4,12 @@ export default async function handler(req, res) {
     
     console.log('API: Haetaan Champions League -otteluita...');
     
-    // Hae menneitä otteluita (viime viikko)
-    const today = new Date();
-    const lastWeek = new Date(today);
-    lastWeek.setDate(lastWeek.getDate() - 7);
+    // Hae vain 1. lokakuuta 2025 otteluita (sama kuin background.js)
+    const october1_2025 = '2025-10-01'; // 1. lokakuuta 2025
     
-    const dateFrom = lastWeek.toISOString().split('T')[0];
-    const dateTo = today.toISOString().split('T')[0];
+    console.log('API: Haetaan otteluita päivältä:', october1_2025);
     
-    console.log('API: Haetaan otteluita päiviltä:', dateFrom, 'to', dateTo);
-    
-    const response = await fetch(`https://api.football-data.org/v4/competitions/CL/matches?dateFrom=${dateFrom}&dateTo=${dateTo}`, {
+    const response = await fetch(`https://api.football-data.org/v4/competitions/CL/matches?dateFrom=${october1_2025}&dateTo=${october1_2025}`, {
       headers: {
         'X-Auth-Token': API_KEY,
         'Content-Type': 'application/json'
@@ -33,35 +28,13 @@ export default async function handler(req, res) {
     console.log('API: API-vastaus:', data);
     
     if (data.matches && data.matches.length > 0) {
-      console.log('API: Löytyi', data.matches.length, 'Champions League -ottelua');
+      console.log('API: Löytyi', data.matches.length, 'Champions League -ottelua 1. lokakuuta 2025');
       
       res.status(200).json({
         matches: data.matches
       });
     } else {
-      // Jos ei menneitä otteluita, hae tulevia
-      console.log('API: Ei menneitä otteluita, haetaan tulevia...');
-      
-      const futureResponse = await fetch(`https://api.football-data.org/v4/competitions/CL/matches?dateFrom=${today.toISOString().split('T')[0]}&dateTo=${new Date(today.getTime() + 7 * 24 * 60 * 60 * 1000).toISOString().split('T')[0]}`, {
-        headers: {
-          'X-Auth-Token': API_KEY,
-          'Content-Type': 'application/json'
-        }
-      });
-      
-      if (futureResponse.ok) {
-        const futureData = await futureResponse.json();
-        if (futureData.matches && futureData.matches.length > 0) {
-          console.log('API: Löytyi', futureData.matches.length, 'tulevaa Champions League -ottelua');
-          res.status(200).json({
-            matches: futureData.matches
-          });
-        } else {
-          throw new Error('Ei Champions League -otteluita löytynyt');
-        }
-      } else {
-        throw new Error('Ei Champions League -otteluita löytynyt');
-      }
+      throw new Error('Ei Champions League -otteluita löytynyt 1. lokakuuta 2025');
     }
     
   } catch (error) {
