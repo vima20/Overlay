@@ -167,6 +167,22 @@
   align-items: center;
   gap: 12px;
   padding: 20px;
+  position: relative;
+}
+
+/* React logo background for score section */
+.Overlay-score::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 120px;
+  height: 120px;
+  background: url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTIwIiBoZWlnaHQ9IjEyMCIgdmlld0JveD0iMCAwIDEyMCAxMjAiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxjaXJjbGUgY3g9IjYwIiBjeT0iNjAiIHI9IjU4IiBzdHJva2U9IiM2MGRhZmIiIHN0cm9rZS13aWR0aD0iNCIvPgo8cGF0aCBkPSJNNDUuNSA2MEM0NS41IDUwLjUgNTIuNSA0My41IDYyIDQzLjVDNzEuNSA0My41IDc4LjUgNTAuNSA3OC41IDYwQzc4LjUgNjkuNSA3MS41IDc2LjUgNjIgNzYuNUM1Mi41IDc2LjUgNDUuNSA2OS41IDQ1LjUgNjBaIiBzdHJva2U9IiM2MGRhZmIiIHN0cm9rZS13aWR0aD0iNCIvPgo8cGF0aCBkPSJNNTcuNSA2MEM1Ny41IDU0LjUgNjEuNSA1MC41IDY3IDUwLjVDNzIuNSA1MC41IDc2LjUgNTQuNSA3Ni41IDYwQzc2LjUgNjUuNSA3Mi41IDY5LjUgNjcgNjkuNUM2MS41IDY5LjUgNTcuNSA2NS41IDU3LjUgNjBaIiBzdHJva2U9IiM2MGRhZmIiIHN0cm9rZS13aWR0aD0iNCIvPgo8L3N2Zz4K') no-repeat center;
+  background-size: contain;
+  opacity: 0.1;
+  z-index: 0;
 }
 
 .Team {
@@ -174,6 +190,8 @@
   flex-direction: column;
   align-items: center;
   gap: 8px;
+  position: relative;
+  z-index: 1;
 }
 
 .Team-name {
@@ -184,11 +202,14 @@
 .Team-score {
   font-size: 42px;
   font-weight: 800;
+  color: #fff;
 }
 
 .Score-divider {
   font-size: 32px;
   opacity: 0.7;
+  position: relative;
+  z-index: 1;
 }
 
 .Overlay-stats {
@@ -206,12 +227,14 @@
   text-align: left;
   opacity: 0.9;
   padding: 8px 0;
+  font-size: 14px;
 }
 
 .Stat-value {
   text-align: right;
   font-weight: 600;
   padding: 8px 0;
+  font-size: 14px;
 }
 
 .Loading, .Error {
