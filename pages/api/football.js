@@ -1,4 +1,14 @@
 export default async function handler(req, res) {
+  // Lisää CORS-headers
+  res.setHeader('Access-Control-Allow-Origin', '*');
+  res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
+  res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
+
+  if (req.method === 'OPTIONS') {
+    res.status(200).end();
+    return;
+  }
+
   if (req.method !== 'GET') {
     return res.status(405).json({ message: 'Method not allowed' });
   }
@@ -25,8 +35,12 @@ export default async function handler(req, res) {
       }
     });
     
+    console.log('API: Response status:', response.status);
+    
     if (!response.ok) {
-      throw new Error(`Football-data.org API-virhe: ${response.status}`);
+      const errorText = await response.text();
+      console.log('API: Error response:', errorText);
+      throw new Error(`Football-data.org API-virhe: ${response.status} - ${errorText}`);
     }
     
     const data = await response.json();
