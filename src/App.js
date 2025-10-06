@@ -30,8 +30,42 @@ function App() {
   const fetchLiveScore = async () => {
     setLoading(true);
     
-    // Käytä vain demo-dataa (ei API-kutsuja)
-    setTimeout(() => {
+    try {
+      // Käytä Vercel API-endpointia
+      const response = await fetch('/api/football');
+      
+      if (!response.ok) {
+        throw new Error(`API-virhe: ${response.status}`);
+      }
+      
+      const data = await response.json();
+      
+      if (data.matches && data.matches.length > 0) {
+        setMatchData({
+          title: "Champions League",
+          subtitle: `Eiliset ottelut (${data.matches.length} kpl)`,
+          date: "Eiliset ottelut • 1.10.2025",
+          matches: data.matches.map(match => ({
+            id: match.id,
+            time: new Date(match.utcDate).toLocaleTimeString('fi-FI', { 
+              hour: '2-digit', 
+              minute: '2-digit' 
+            }),
+            homeTeam: match.homeTeam.name,
+            awayTeam: match.awayTeam.name,
+            homeScore: match.score.fullTime?.home || 0,
+            awayScore: match.score.fullTime?.away || 0,
+            status: match.status
+          }))
+        });
+      } else {
+        throw new Error('Ei Champions League -otteluita löytynyt');
+      }
+      
+    } catch (error) {
+      console.error("API-virhe:", error);
+      
+      // Fallback demo-data
       const demoMatches = [
         {
           id: 1,
@@ -50,81 +84,18 @@ function App() {
           homeScore: 0,
           awayScore: 4,
           status: "FINISHED"
-        },
-        {
-          id: 3,
-          time: "22.00",
-          homeTeam: "Borussia Dortmund", 
-          awayTeam: "Athletic Club",
-          homeScore: 4,
-          awayScore: 1,
-          status: "FINISHED"
-        },
-        {
-          id: 4,
-          time: "19.45",
-          homeTeam: "Real Madrid",
-          awayTeam: "Barcelona",
-          homeScore: 3,
-          awayScore: 1,
-          status: "FINISHED"
-        },
-        {
-          id: 5,
-          time: "22.00",
-          homeTeam: "Manchester City",
-          awayTeam: "Liverpool",
-          homeScore: 2,
-          awayScore: 2,
-          status: "FINISHED"
-        },
-        {
-          id: 6,
-          time: "19.45",
-          homeTeam: "Bayern Munich",
-          awayTeam: "PSG",
-          homeScore: 1,
-          awayScore: 3,
-          status: "FINISHED"
-        },
-        {
-          id: 7,
-          time: "22.00",
-          homeTeam: "Chelsea",
-          awayTeam: "Arsenal",
-          homeScore: 2,
-          awayScore: 1,
-          status: "FINISHED"
-        },
-        {
-          id: 8,
-          time: "19.45",
-          homeTeam: "Inter Milan",
-          awayTeam: "AC Milan",
-          homeScore: 0,
-          awayScore: 2,
-          status: "FINISHED"
-        },
-        {
-          id: 9,
-          time: "22.00",
-          homeTeam: "Atletico Madrid",
-          awayTeam: "Sevilla",
-          homeScore: 3,
-          awayScore: 0,
-          status: "FINISHED"
         }
       ];
 
       setMatchData({
         title: "Champions League",
-        subtitle: "Eiliset ottelut (9 kpl)",
+        subtitle: "Demo-tulokset (API ei toimi)",
         date: "Eiliset ottelut • 1.10.2025",
         matches: demoMatches
       });
-      
+    } finally {
       setLoading(false);
-    }, 1000); // 1 sekunnin viive simuloidakseen latausta
+    }
   };
 
   const showMatchStats = (match) => {
