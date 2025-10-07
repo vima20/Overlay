@@ -166,15 +166,14 @@
       // Lähetä viesti background scriptille päivämäärällä
       const response = await new Promise((resolve, reject) => {
         chrome.runtime.sendMessage({ 
-          action: 'fetchChampionsLeague',
-          dateFrom: october1_2025,
-          dateTo: october1_2025
+          action: 'fetchChampionsLeague'
+          // Poista dateFrom ja dateTo - background.js hakee automaattisesti
         }, (response) => {
           if (chrome.runtime.lastError) {
             console.error('Content: Runtime error:', chrome.runtime.lastError);
             reject(new Error(chrome.runtime.lastError.message));
           } else if (response && response.success) {
-            console.log('Content: 1.10.2025 otteluita löytyi:', response.data);
+            console.log('Content: Vercel-API vastaus:', response.data);
             resolve(response.data);
           } else {
             console.error('Content: Background error:', response);
@@ -420,7 +419,7 @@
               backButton +
               '<button class="ao-close" aria-label="Sulje">×</button>' +
             '</div>' +
-          '</div>' +
+        '</div>' +
         '<div class="ao-score">' +
           '<div class="ao-team">' +
             '<div class="ao-name">' + matchData.homeTeam + '</div>' +
