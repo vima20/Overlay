@@ -391,6 +391,9 @@
         panel.querySelectorAll('.ao-stats-btn').forEach(btn => {
           btn.addEventListener('click', (e) => {
             e.preventDefault();
+            e.stopPropagation();
+            e.stopImmediatePropagation();
+            
             const matchId = btn.getAttribute('data-match-id');
             const homeTeam = btn.getAttribute('data-home-team');
             const awayTeam = btn.getAttribute('data-away-team');
