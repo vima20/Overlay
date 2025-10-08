@@ -156,10 +156,18 @@
     try {
       console.log('Content: Haetaan Yle Areenan otteluita...');
       
+      // TYHJENNÄ VANHA DATA
+      matchData = null;
+      
       // Hae Yle Areenan otteluita
       const displayDate = new Date().toLocaleDateString('fi-FI');
       
       console.log('Content: Haetaan Yle Areenan otteluita päivältä:', displayDate);
+      console.log('Content: Täysi päivämäärä:', new Date().toLocaleDateString('fi-FI', { 
+        year: 'numeric', 
+        month: '2-digit', 
+        day: '2-digit' 
+      }));
       
             // Lähetä viesti background scriptille
             const response = await new Promise((resolve, reject) => {
@@ -457,8 +465,10 @@
   }
 
   function onKey(e) {
-    if (e.ctrlKey && e.key === 'k') {
+    if (e.ctrlKey && e.key === 'j') {
       e.preventDefault();
+      e.stopPropagation();
+      e.stopImmediatePropagation();
       toggle();
     } else if (e.key === 'Escape') {
       toggle(false);
