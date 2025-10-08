@@ -42,9 +42,9 @@ function App() {
       
       if (data.matches && data.matches.length > 0) {
         setMatchData({
-          title: "Champions League",
+          title: "Yle Areenan ottelut", // MUUTA: Champions League → Yle Areenan ottelut
           subtitle: `Ottelut (${data.matches.length} kpl)`,
-          date: "1.10.2025",
+          date: new Date().toLocaleDateString('fi-FI'), // MUUTA: 1.10.2025 → oikea päivä
           matches: data.matches.map(match => ({
             id: match.id,
             time: new Date(match.utcDate).toLocaleTimeString('fi-FI', { 
@@ -59,19 +59,15 @@ function App() {
           }))
         });
       } else {
-        throw new Error('Ei Champions League -otteluita löytynyt');
+        throw new Error('Ei Yle Areenan otteluita löytynyt'); // MUUTA: Champions League → Yle Areenan otteluita
       }
       
     } catch (error) {
       console.error("API-virhe:", error);
       
-      // Näytä virheviesti
-      setMatchData({
-        title: "Champions League",
-        subtitle: "API-virhe",
-        date: "1.10.2025",
-        matches: []
-      });
+      // POISTA FALLBACK-DATA KOKONAAN
+      setMatchData(null); // Älä näytä mitään fallback-dataa
+      
     } finally {
       setLoading(false);
     }
@@ -134,7 +130,8 @@ function App() {
     <div className="App">
       <header className="App-header">
         <img src={logo} className="App-logo" alt="logo" />
-        <p>Paina Ctrl+K avataksesi/sulkeaksesi Champions League overlayn. Esc sulkee.</p>
+        {/* MUUTA: Champions League → Yle Areenan ottelut */}
+        <p>Paina Ctrl+K avataksesi/sulkeaksesi Yle Areenan overlayn. Esc sulkee.</p>
       </header>
 
       {isOverlayOpen && (
@@ -146,7 +143,7 @@ function App() {
             onClick={(e) => e.stopPropagation()}
           >
             {loading ? (
-              <div className="Loading">Ladataan Champions League -tuloksia...</div>
+              <div className="Loading">Ladataan Yle Areenan otteluita...</div>
             ) : matchData ? (
               <>
                 {!selectedMatch ? (
@@ -196,11 +193,11 @@ function App() {
                     )}
                   </>
                 ) : (
-                  <div className="Error">Virhe Champions League -tietojen lataamisessa</div>
+                  <div className="Error">Virhe Yle Areenan otteluiden lataamisessa</div>
                 )}
               </>
             ) : (
-              <div className="Error">Virhe Champions League -tietojen lataamisessa</div>
+              <div className="Error">Virhe Yle Areenan otteluiden lataamisessa</div>
             )}
 
             {selectedMatch && (

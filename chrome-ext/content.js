@@ -154,26 +154,23 @@
     updatePanel();
     
     try {
-      console.log('Content: Haetaan 1.10.2025 Champions League -otteluita...');
+      console.log('Content: Haetaan Yle Areenan otteluita...');
       
-      // Hae 1. lokakuuta 2025 otteluita
-      const october1_2025 = '2025-10-01'; // 1. lokakuuta 2025
-      const displayDate = '1.10.2025'; // Näytettävä päivämäärä
+      // Hae Yle Areenan otteluita
+      const displayDate = new Date().toLocaleDateString('fi-FI');
       
-      console.log('Content: Haetaan otteluita päivältä:', october1_2025);
-      console.log('Content: Näytettävä päivämäärä:', displayDate);
+      console.log('Content: Haetaan Yle Areenan otteluita päivältä:', displayDate);
       
-      // Lähetä viesti background scriptille päivämäärällä
-      const response = await new Promise((resolve, reject) => {
-        chrome.runtime.sendMessage({ 
-          action: 'fetchChampionsLeague'
-          // Poista dateFrom ja dateTo - background.js hakee automaattisesti
-        }, (response) => {
+            // Lähetä viesti background scriptille
+            const response = await new Promise((resolve, reject) => {
+              chrome.runtime.sendMessage({ 
+                action: 'fetchChampionsLeague'
+              }, (response) => {
           if (chrome.runtime.lastError) {
             console.error('Content: Runtime error:', chrome.runtime.lastError);
             reject(new Error(chrome.runtime.lastError.message));
           } else if (response && response.success) {
-            console.log('Content: Vercel-API vastaus:', response.data);
+            console.log('Content: Yle Areena API vastaus:', response.data);
             resolve(response.data);
           } else {
             console.error('Content: Background error:', response);
@@ -232,7 +229,7 @@
         });
         
         matchData = {
-          title: 'Champions League',
+          title: 'Yle Areenan ottelut',
           subtitle: `Eiliset ottelut (${response.matches.length} kpl)`,
           homeTeam: '', // Ei käytetä
           awayTeam: '', // Ei käytetä
@@ -245,7 +242,7 @@
           matches: response.matches // Tallenna ottelut
         };
       } else {
-        throw new Error('Ei Champions League -otteluita löytynyt 1.10.2025');
+        throw new Error('Ei Yle Areenan otteluita löytynyt 1.10.2025');
       }
 
     } catch (error) {
