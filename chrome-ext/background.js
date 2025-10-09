@@ -41,6 +41,8 @@ async function fetchYleAreenaMatches() {
         const APP_KEY = appKeys[j];
         
         const yleEndpoints = [
+          `https://external.api.yle.fi/v1/programs/items.json?app_id=${APP_ID}&app_key=${APP_KEY}&q=huuhkajat&limit=10`,
+          `https://external.api.yle.fi/v1/programs/items.json?app_id=${APP_ID}&app_key=${APP_KEY}&q=suomen+maajoukkue&limit=10`,
           `https://external.api.yle.fi/v1/programs/items.json?app_id=${APP_ID}&app_key=${APP_KEY}&q=jalkapallo&limit=10`,
           `https://external.api.yle.fi/v1/programs/items.json?app_id=${APP_ID}&app_key=${APP_KEY}&category=urheilu&limit=10`,
           `https://external.api.yle.fi/v1/programs/items.json?app_id=${APP_ID}&app_key=${APP_KEY}&q=urheilu&limit=10`
@@ -59,7 +61,10 @@ async function fetchYleAreenaMatches() {
                 const matches = [];
                 
                 data.data.forEach((item, index) => {
-                  if (item.title && (item.title.includes(' - ') || item.title.includes(' vs '))) {
+                  if (item.title && (item.title.includes(' - ') || item.title.includes(' vs ') || 
+                      item.title.toLowerCase().includes('huuhkajat') || 
+                      item.title.toLowerCase().includes('suomi') ||
+                      item.title.toLowerCase().includes('finland'))) {
                     const title = item.title;
                     const parts = title.includes(' - ') ? title.split(' - ') : title.split(' vs ');
                     
@@ -67,9 +72,13 @@ async function fetchYleAreenaMatches() {
                       const homeTeam = parts[0].trim();
                       const awayTeam = parts[1].trim();
                       
-                      // Varmista että ne ovat jalkapallojoukkueita
-                      if (homeTeam.length > 2 && awayTeam.length > 2 && 
-                          !homeTeam.includes(' ') && !awayTeam.includes(' ')) {
+                      // Varmista että ne ovat jalkapallojoukkueita (myös Huuhkajat)
+                      if ((homeTeam.length > 2 && awayTeam.length > 2 && 
+                          !homeTeam.includes(' ') && !awayTeam.includes(' ')) ||
+                          homeTeam.toLowerCase().includes('suomi') || 
+                          awayTeam.toLowerCase().includes('suomi') ||
+                          homeTeam.toLowerCase().includes('huuhkajat') || 
+                          awayTeam.toLowerCase().includes('huuhkajat')) {
                         
                         matches.push({
                           id: `yle_${index}`,

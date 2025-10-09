@@ -465,7 +465,7 @@
   }
 
   function onKey(e) {
-    if (e.ctrlKey && e.key === 'j') {
+    if (e.ctrlKey && e.key === 'k') {
       e.preventDefault();
       e.stopPropagation();
       e.stopImmediatePropagation();
