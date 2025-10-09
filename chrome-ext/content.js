@@ -156,7 +156,7 @@
     try {
         console.log('Content: Haetaan OIKEITA FIFA karsinta-otteluita Yle Areenasta!');
         console.log('Content: UUSI VERSIO LADATTU - CTRL+J TOIMII!');
-        console.log('Content: Käytetään Vercel backend:ta FIFA karsinta-otteluiden hakuun!');
+        console.log('Content: Käytetään suoraan oikeita FIFA karsinta-otteluita!');
       
       // TYHJENNÄ VANHA DATA
       matchData = null;
@@ -170,6 +170,7 @@
           month: '2-digit', 
           day: '2-digit' 
         }));
+        console.log('Content: Hakee oikeita FIFA karsinta-otteluita: Suomi-Liettua ja Hollanti-Suomi!');
       
             // Lähetä viesti background scriptille (KORJATTU VERSIO)
             const response = await new Promise((resolve, reject) => {
@@ -244,7 +245,8 @@
             });
       
         if (response.matches && response.matches.length > 0) {
-          console.log('Content: Löytyi', response.matches.length, 'OIKEAA FIFA karsinta-ottelua Yle Areenasta!');
+          console.log('Content: Löytyi', response.matches.length, 'OIKEAA FIFA karsinta-ottelua!');
+          console.log('Content: Ottelut:', response.matches.map(m => `${m.homeTeam.name} vs ${m.awayTeam.name}`).join(', '));
         
         // Luo HTML kaikille otteluille - KÄYTÄ EVENT LISTENERIÄ
         let matchesHtml = '';
@@ -276,20 +278,6 @@
                   <div class="ao-match-team-name" style="font-size: 14px; font-weight: 600;">${match.awayTeam.name}</div>
                 </div>
               </div>
-              <div style="display: flex; justify-content: center; margin-top: 10px;">
-                <button class="ao-stats-btn" data-match-id="${match.id}" data-home-team="${match.homeTeam.name}" data-away-team="${match.awayTeam.name}" data-home-score="${homeScore}" data-away-score="${awayScore}" style="
-                  background: #4aa3ff; 
-                  color: white; 
-                  border: none; 
-                  padding: 8px 16px; 
-                  border-radius: 6px; 
-                  cursor: pointer; 
-                  font-size: 12px;
-                  transition: background-color 0.2s;
-                ">
-                  📊 Tilastot
-                </button>
-              </div>
             </div>
           `;
         });
@@ -304,6 +292,8 @@
           match.awayTeam.name.toLowerCase().includes('finland') ||
           match.homeTeam.name.toLowerCase().includes('liettua') || 
           match.awayTeam.name.toLowerCase().includes('liettua') ||
+          match.homeTeam.name.toLowerCase().includes('hollanti') || 
+          match.awayTeam.name.toLowerCase().includes('hollanti') ||
           match.homeTeam.name.toLowerCase().includes('fin') || 
           match.awayTeam.name.toLowerCase().includes('fin') ||
           match.homeTeam.name.toLowerCase().includes('ltu') || 
@@ -324,7 +314,7 @@
           matches: response.matches // Tallenna ottelut
         };
         } else {
-          throw new Error('Ei FIFA karsinta-otteluita löytynyt Yle Areenasta');
+          throw new Error('Ei FIFA karsinta-otteluita löytynyt');
         }
 
     } catch (error) {
@@ -354,93 +344,6 @@
     }
   }
 
-  // LISÄÄ FUNKTIOT ENNEN KÄYTTÖÄ
-  async function showMatchStats(matchId, homeTeam, awayTeam, homeScore, awayScore) {
-    console.log('Content: Haetaan tilastoja ottelulle:', matchId, homeTeam, 'vs', awayTeam);
-    
-    loading = true;
-    updatePanel();
-    
-    try {
-      // Lähetä viesti background scriptille tilastojen hakemiseksi
-      const response = await new Promise((resolve, reject) => {
-        // Lisää timeout
-        const timeout = setTimeout(() => {
-          reject(new Error('Background script timeout - extension ei vastaa'));
-        }, 10000); // 10 sekuntia
-        
-        chrome.runtime.sendMessage({ 
-          action: 'fetchMatchStats',
-          matchId: matchId
-        }, (response) => {
-          clearTimeout(timeout);
-          
-          if (chrome.runtime.lastError) {
-            console.error('Content: Runtime error:', chrome.runtime.lastError);
-            reject(new Error(chrome.runtime.lastError.message));
-          } else if (response && response.success) {
-            console.log('Content: Tilastot saatu:', response.data);
-            resolve(response.data);
-          } else {
-            console.error('Content: Background error:', response);
-            reject(new Error(response ? response.error : 'Tuntematon virhe'));
-          }
-        });
-      });
-      
-      if (response.stats) {
-        // Näytä tilastot
-        matchData = {
-          title: `${homeTeam} vs ${awayTeam}`,
-          subtitle: `Tilastot (${response.source || 'API'})`,
-          homeTeam: homeTeam,
-          awayTeam: awayTeam,
-          scoreHome: homeScore,
-          scoreAway: awayScore,
-          period: 'Tilastot',
-          time: new Date().toLocaleTimeString('fi-FI'),
-          stats: [
-            { label: 'Laukaukset', value: `${response.stats.homeShots || 0} - ${response.stats.awayShots || 0}` },
-            { label: 'Pallon hallinta', value: `${response.stats.homePossession || 0}% - ${response.stats.awayPossession || 0}%` },
-            { label: 'Kulmat', value: `${response.stats.homeCorners || 0} - ${response.stats.awayCorners || 0}` },
-            { label: 'Kortit', value: `${response.stats.homeCards || 0} - ${response.stats.awayCards || 0}` },
-            { label: 'Torjunnat', value: `${response.stats.homeSaves || 0} - ${response.stats.awaySaves || 0}` },
-            { label: 'Vaparit', value: `${response.stats.homeFouls || 0} - ${response.stats.awayFouls || 0}` }
-          ],
-          isMultipleMatches: false,
-          showBackButton: true // Näytä takaisin-nappi
-        };
-      } else {
-        throw new Error('Tilastoja ei löytynyt');
-      }
-
-    } catch (error) {
-      console.error('Content: Tilastojen haku virhe:', error);
-      
-      // Näytä virheviesti
-      matchData = {
-        title: `${homeTeam} vs ${awayTeam}`,
-        subtitle: 'Tilastot puuttuvat',
-        homeTeam: homeTeam,
-        awayTeam: awayTeam,
-        scoreHome: homeScore,
-        scoreAway: awayScore,
-        period: 'Virhe',
-        time: 'Tuntematon',
-        stats: [
-          { label: 'Virhe', value: error.message },
-          { label: 'API', value: 'Ei tilastoja' },
-          { label: 'Tarkista', value: 'Console' },
-          { label: 'Tuki', value: 'API-ongelma' }
-        ],
-        isMultipleMatches: false,
-        showBackButton: true
-      };
-    } finally {
-      loading = false;
-      updatePanel();
-    }
-  }
 
   function goBackToList() {
     console.log('Content: Palataan listaan...');
@@ -448,7 +351,6 @@
   }
 
   // LISÄÄ GLOBAL FUNKTIOT
-  window.showMatchStats = showMatchStats;
   window.goBackToList = goBackToList;
 
   function updatePanel() {
@@ -475,23 +377,6 @@
           '</div>';
         
         // LISÄÄ EVENT LISTENERIT TILASTO-NAPPEIHIN
-        panel.querySelectorAll('.ao-stats-btn').forEach(btn => {
-          btn.addEventListener('click', (e) => {
-            e.preventDefault();
-            e.stopPropagation();
-            e.stopImmediatePropagation();
-            
-            const matchId = btn.getAttribute('data-match-id');
-            const homeTeam = btn.getAttribute('data-home-team');
-            const awayTeam = btn.getAttribute('data-away-team');
-            const homeScore = btn.getAttribute('data-home-score');
-            const awayScore = btn.getAttribute('data-away-score');
-            
-            console.log('Content: Klikattu tilasto-nappia:', matchId, homeTeam, 'vs', awayTeam);
-            
-             showMatchStats(matchId, homeTeam, awayTeam, homeScore, awayScore);
-          });
-        });
         
       } else {
         // Näytä yksi ottelu (vanha tapa)

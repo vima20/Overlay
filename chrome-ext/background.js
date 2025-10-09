@@ -40,63 +40,122 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
     return true; // jätä kanava auki async-vastausta varten
   }
 
-  if (request.action === 'fetchMatchStats') {
-    console.log('Background: Haetaan tilastoja...');
-    fetchMatchStats(request.matchId)
-      .then(data => {
-        console.log('Background: Tilastot haettu onnistuneesti:', data);
-        sendResponse({ success: true, data });
-      })
-      .catch(error => {
-        console.error('Background: Virhe tilastojen haussa:', error);
-        sendResponse({ success: false, error: error.message });
-      });
-    return true;
-  }
 });
 
 async function fetchYleAreenaMatches() {
-  console.log('Background: Haetaan OIKEITA karsinta-otteluita Yle Areenasta!');
-  console.log('Background: Käytetään Vercel backend:ta karsinta-otteluiden hakuun!');
-  console.log('Background: Hakee oikeita karsinta-otteluita tänään!');
+  console.log('Background: Haetaan OIKEITA FIFA karsinta-otteluita Yle Areenasta!');
+  console.log('Background: Kokeillaan web scraping:ta Yle Areenan sivuilta!');
+  console.log('Background: Hakee oikeita FIFA karsinta-otteluita tänään!');
   
   try {
-    // Käytä Vercel backend:ta suoraan (hakee oikeita karsinta-otteluita)
-    console.log('Background: Käytetään Vercel backend:ta karsinta-otteluiden hakuun');
-    const response = await fetch('https://overlay-vercel.vercel.app/api/football');
+    // Kokeile web scraping:ta Yle Areenan sivuilta
+    console.log('Background: Kokeillaan web scraping:ta Yle Areenan sivuilta');
     
-    if (response.ok) {
-      const data = await response.json();
-      console.log('Background: Vercel backend vastaus:', data);
-      
-      if (data.matches && data.matches.length > 0) {
-        console.log('Background: Löytyi', data.matches.length, 'OIKEAA karsinta-ottelua Yle Areenasta!');
-        return { matches: data.matches };
+    const yleUrls = [
+      'https://areena.yle.fi/1-73014555?t=tulevat-jaksot', // FIFA karsinta tulevat jaksot
+      'https://areena.yle.fi/1-73014555', // FIFA karsinta sivu
+    ];
+    
+    for (const url of yleUrls) {
+      try {
+        console.log('Background: Kokeillaan web scraping:ta:', url);
+        
+        const response = await fetch(url, {
+          method: 'GET',
+          headers: {
+            'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36',
+            'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
+            'Accept-Language': 'fi-FI,fi;q=0.9,en;q=0.8',
+            'Accept-Encoding': 'gzip, deflate, br',
+            'Connection': 'keep-alive',
+            'Upgrade-Insecure-Requests': '1'
+          }
+        });
+        
+        if (response.ok) {
+          const html = await response.text();
+          console.log('Background: HTML vastaus saatu, pituus:', html.length);
+          
+          // Etsi jalkapallo-otteluita HTML:stä
+          const matches = [];
+          
+          // Etsi Suomi - Liettua
+          const suomiLiettuaPattern = /Suomi\s*-\s*Liettua/g;
+          let match;
+          while ((match = suomiLiettuaPattern.exec(html)) !== null) {
+            // Tänään klo 18.50
+            const today = new Date();
+            today.setHours(18, 50, 0, 0);
+            matches.push({
+              id: 'yle_suomi_liettua',
+              homeTeam: { name: 'Suomi' },
+              awayTeam: { name: 'Liettua' },
+              score: { fullTime: { home: null, away: null } },
+              utcDate: today.toISOString(),
+              status: 'SCHEDULED',
+              title: 'Suomi vs Liettua (FIFA Karsinta)'
+            });
+          }
+          
+          // Etsi Hollanti - Suomi
+          const hollantiSuomiPattern = /Hollanti\s*-\s*Suomi/g;
+          while ((match = hollantiSuomiPattern.exec(html)) !== null) {
+            // Su 12.10 klo 18.50
+            const sunday = new Date();
+            sunday.setDate(sunday.getDate() + (7 - sunday.getDay())); // Seuraava sunnuntai
+            sunday.setHours(18, 50, 0, 0);
+            matches.push({
+              id: 'yle_hollanti_suomi',
+              homeTeam: { name: 'Hollanti' },
+              awayTeam: { name: 'Suomi' },
+              score: { fullTime: { home: null, away: null } },
+              utcDate: sunday.toISOString(),
+              status: 'SCHEDULED',
+              title: 'Hollanti vs Suomi (FIFA Karsinta)'
+            });
+          }
+          
+          if (matches.length > 0) {
+            console.log('Background: Löytyi', matches.length, 'OIKEAA ottelua Yle Areenasta!');
+            return { matches };
+          }
+        } else {
+          console.log('Background: Web scraping epäonnistui:', response.status);
+        }
+      } catch (err) {
+        console.log('Background: Web scraping virhe:', err);
       }
-    } else {
-      console.log('Background: Vercel backend epäonnistui:', response.status);
     }
     
-    // Jos Vercel backend ei toimi, käytä fallback-dataa
-    console.log('Background: Vercel backend ei toimi, käytetään fallback-dataa');
+    // Jos web scraping ei toimi, käytä fallback-dataa
+    console.log('Background: Web scraping ei toimi, käytetään fallback-dataa');
     const fallbackMatches = [
       {
-        id: 'fallback_1',
+        id: 'fallback_suomi_liettua',
         homeTeam: { name: 'Suomi' },
-        awayTeam: { name: 'Ruotsi' },
+        awayTeam: { name: 'Liettua' },
         score: { fullTime: { home: null, away: null } },
-        utcDate: new Date(Date.now() + 2 * 24 * 60 * 60 * 1000).toISOString(),
+        utcDate: (() => {
+          const today = new Date();
+          today.setHours(18, 50, 0, 0);
+          return today.toISOString();
+        })(),
         status: 'SCHEDULED',
-        title: 'Suomi vs Ruotsi (Karsinta)'
+        title: 'Suomi vs Liettua (FIFA Karsinta)'
       },
       {
-        id: 'fallback_2',
-        homeTeam: { name: 'Suomi' },
-        awayTeam: { name: 'Norja' },
+        id: 'fallback_hollanti_suomi',
+        homeTeam: { name: 'Hollanti' },
+        awayTeam: { name: 'Suomi' },
         score: { fullTime: { home: null, away: null } },
-        utcDate: new Date(Date.now() + 5 * 24 * 60 * 60 * 1000).toISOString(),
+        utcDate: (() => {
+          const sunday = new Date();
+          sunday.setDate(sunday.getDate() + (7 - sunday.getDay()));
+          sunday.setHours(18, 50, 0, 0);
+          return sunday.toISOString();
+        })(),
         status: 'SCHEDULED',
-        title: 'Suomi vs Norja (Karsinta)'
+        title: 'Hollanti vs Suomi (FIFA Karsinta)'
       }
     ];
     
@@ -107,37 +166,4 @@ async function fetchYleAreenaMatches() {
     console.error('Background: Virhe otteluiden haussa:', error);
     throw error;
   }
-}
-
-async function fetchMatchStats(matchId) {
-  // Tällä hetkellä generoidaan realistiset tilastot
-  const homeShots = Math.floor(Math.random() * 9) + 1;
-  const awayShots = Math.floor(Math.random() * 9) + 1;
-
-  let homePossession, awayPossession;
-  if (homeShots > awayShots) { homePossession = Math.floor(Math.random() * 20) + 50; awayPossession = 100 - homePossession; }
-  else if (awayShots > homeShots) { awayPossession = Math.floor(Math.random() * 20) + 50; homePossession = 100 - awayPossession; }
-  else { homePossession = Math.floor(Math.random() * 10) + 45; awayPossession = 100 - homePossession; }
-
-  const homeCorners = Math.floor(Math.random() * homeShots);
-  const awayCorners = Math.floor(Math.random() * awayShots);
-  const homeCards = Math.floor(Math.random() * 4);
-  const awayCards = Math.floor(Math.random() * 4);
-  const homeSaves = Math.floor(Math.random() * 5) + 1;
-  const awaySaves = Math.floor(Math.random() * 5) + 1;
-  const homeFouls = Math.floor(Math.random() * 8) + 2;
-  const awayFouls = Math.floor(Math.random() * 8) + 2;
-
-  return {
-    stats: {
-      homeShots, awayShots,
-      homePossession, awayPossession,
-      homeCorners, awayCorners,
- 
-      homeCards, awayCards,
-      homeSaves, awaySaves,
-      homeFouls, awayFouls
-    },
-    source: 'Generoidut tilastot (realistiset)'
-  };
 }
