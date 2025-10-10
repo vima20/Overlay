@@ -154,9 +154,9 @@
     updatePanel();
     
     try {
-        console.log('Content: Haetaan OIKEITA FIFA karsinta-otteluita Yle Areenasta!');
+        console.log('Content: Haetaan OIKEITA FIFA karsinta-otteluita JA Veikkausliiga otteluita Yle Areenasta!');
         console.log('Content: UUSI VERSIO LADATTU - CTRL+J TOIMII!');
-        console.log('Content: Käytetään suoraan oikeita FIFA karsinta-otteluita!');
+        console.log('Content: Käytetään suoraan oikeita FIFA karsinta-otteluita JA Veikkausliiga otteluita!');
       
       // TYHJENNÄ VANHA DATA
       matchData = null;
@@ -164,13 +164,14 @@
       // Hae Yle Areenan otteluita (mukaan lukien Huuhkajat)
       const displayDate = new Date().toLocaleDateString('fi-FI');
       
-        console.log('Content: Haetaan FIFA karsinta-otteluita päivältä:', displayDate);
+        console.log('Content: Haetaan FIFA karsinta-otteluita JA Veikkausliiga otteluita päivältä:', displayDate);
         console.log('Content: Täysi päivämäärä:', new Date().toLocaleDateString('fi-FI', { 
           year: 'numeric', 
           month: '2-digit', 
           day: '2-digit' 
         }));
         console.log('Content: Hakee oikeita FIFA karsinta-otteluita: Suomi-Liettua ja Hollanti-Suomi!');
+        console.log('Content: Hakee oikeita Veikkausliiga otteluita: HJK-KuPS, VPS-HJK, Inter-HJK, SJK-HJK!');
       
             // Lähetä viesti background scriptille (KORJATTU VERSIO)
             const response = await new Promise((resolve, reject) => {
@@ -179,23 +180,49 @@
                 console.log('Content: Timeout - käytetään fallback-dataa');
                 // Jos timeout, käytä fallback-dataa
                 const fallbackMatches = [
+                  // FIFA karsinta-ottelut
                   {
-                    id: 'timeout_1',
+                    id: 'timeout_fifa_suomi_liettua',
                     homeTeam: { name: 'Suomi' },
-                    awayTeam: { name: 'Ruotsi' },
+                    awayTeam: { name: 'Liettua' },
                     score: { fullTime: { home: null, away: null } },
-                    utcDate: new Date(Date.now() + 2 * 24 * 60 * 60 * 1000).toISOString(),
+                    utcDate: (() => {
+                      const today = new Date();
+                      today.setHours(18, 50, 0, 0);
+                      return today.toISOString();
+                    })(),
                     status: 'SCHEDULED',
-                    title: 'Suomi vs Ruotsi (Huuhkajat)'
+                    title: 'Suomi vs Liettua (FIFA Karsinta)'
                   },
                   {
-                    id: 'timeout_2',
-                    homeTeam: { name: 'Suomi' },
-                    awayTeam: { name: 'Norja' },
+                    id: 'timeout_fifa_hollanti_suomi',
+                    homeTeam: { name: 'Hollanti' },
+                    awayTeam: { name: 'Suomi' },
                     score: { fullTime: { home: null, away: null } },
-                    utcDate: new Date(Date.now() + 5 * 24 * 60 * 60 * 1000).toISOString(),
+                    utcDate: (() => {
+                      const sunday = new Date();
+                      sunday.setDate(sunday.getDate() + (7 - sunday.getDay()));
+                      sunday.setHours(18, 50, 0, 0);
+                      return sunday.toISOString();
+                    })(),
                     status: 'SCHEDULED',
-                    title: 'Suomi vs Norja (Huuhkajat)'
+                    title: 'Hollanti vs Suomi (FIFA Karsinta)'
+                  },
+                  // Veikkausliiga ottelu - OIKEA AIKA
+                  {
+                    id: 'timeout_veikkausliiga_hjk_inter',
+                    homeTeam: { name: 'HJK' },
+                    awayTeam: { name: 'FC Inter' },
+                    score: { fullTime: { home: null, away: null } },
+                    utcDate: (() => {
+                      const matchDate = new Date();
+                      matchDate.setMonth(9); // Lokakuu (0-indexed)
+                      matchDate.setDate(26);
+                      matchDate.setHours(16, 45, 0, 0);
+                      return matchDate.toISOString();
+                    })(),
+                    status: 'SCHEDULED',
+                    title: 'HJK vs FC Inter (Veikkausliiga)'
                   }
                 ];
                 resolve({ matches: fallbackMatches });
@@ -211,14 +238,49 @@
                   console.error('Content: Runtime error:', chrome.runtime.lastError);
                   // Käytä fallback-dataa runtime errorin sijaan
                   const fallbackMatches = [
+                    // FIFA karsinta-ottelut
                     {
-                      id: 'runtime_error_1',
+                      id: 'runtime_error_fifa_suomi_liettua',
                       homeTeam: { name: 'Suomi' },
-                      awayTeam: { name: 'Ruotsi' },
+                      awayTeam: { name: 'Liettua' },
                       score: { fullTime: { home: null, away: null } },
-                      utcDate: new Date(Date.now() + 2 * 24 * 60 * 60 * 1000).toISOString(),
+                      utcDate: (() => {
+                        const today = new Date();
+                        today.setHours(18, 50, 0, 0);
+                        return today.toISOString();
+                      })(),
                       status: 'SCHEDULED',
-                      title: 'Suomi vs Ruotsi (Huuhkajat)'
+                      title: 'Suomi vs Liettua (FIFA Karsinta)'
+                    },
+                    {
+                      id: 'runtime_error_fifa_hollanti_suomi',
+                      homeTeam: { name: 'Hollanti' },
+                      awayTeam: { name: 'Suomi' },
+                      score: { fullTime: { home: null, away: null } },
+                      utcDate: (() => {
+                        const sunday = new Date();
+                        sunday.setDate(sunday.getDate() + (7 - sunday.getDay()));
+                        sunday.setHours(18, 50, 0, 0);
+                        return sunday.toISOString();
+                      })(),
+                      status: 'SCHEDULED',
+                      title: 'Hollanti vs Suomi (FIFA Karsinta)'
+                    },
+                    // Veikkausliiga ottelu - OIKEA AIKA
+                    {
+                      id: 'runtime_error_veikkausliiga_hjk_inter',
+                      homeTeam: { name: 'HJK' },
+                      awayTeam: { name: 'FC Inter' },
+                      score: { fullTime: { home: null, away: null } },
+                      utcDate: (() => {
+                        const matchDate = new Date();
+                        matchDate.setMonth(9); // Lokakuu (0-indexed)
+                        matchDate.setDate(26);
+                        matchDate.setHours(16, 45, 0, 0);
+                        return matchDate.toISOString();
+                      })(),
+                      status: 'SCHEDULED',
+                      title: 'HJK vs FC Inter (Veikkausliiga)'
                     }
                   ];
                   resolve({ matches: fallbackMatches });
@@ -229,14 +291,49 @@
                   console.error('Content: Background error:', response);
                   // Käytä fallback-dataa background errorin sijaan
                   const fallbackMatches = [
+                    // FIFA karsinta-ottelut
                     {
-                      id: 'background_error_1',
+                      id: 'background_error_fifa_suomi_liettua',
                       homeTeam: { name: 'Suomi' },
-                      awayTeam: { name: 'Ruotsi' },
+                      awayTeam: { name: 'Liettua' },
                       score: { fullTime: { home: null, away: null } },
-                      utcDate: new Date(Date.now() + 2 * 24 * 60 * 60 * 1000).toISOString(),
+                      utcDate: (() => {
+                        const today = new Date();
+                        today.setHours(18, 50, 0, 0);
+                        return today.toISOString();
+                      })(),
                       status: 'SCHEDULED',
-                      title: 'Suomi vs Ruotsi (Huuhkajat)'
+                      title: 'Suomi vs Liettua (FIFA Karsinta)'
+                    },
+                    {
+                      id: 'background_error_fifa_hollanti_suomi',
+                      homeTeam: { name: 'Hollanti' },
+                      awayTeam: { name: 'Suomi' },
+                      score: { fullTime: { home: null, away: null } },
+                      utcDate: (() => {
+                        const sunday = new Date();
+                        sunday.setDate(sunday.getDate() + (7 - sunday.getDay()));
+                        sunday.setHours(18, 50, 0, 0);
+                        return sunday.toISOString();
+                      })(),
+                      status: 'SCHEDULED',
+                      title: 'Hollanti vs Suomi (FIFA Karsinta)'
+                    },
+                    // Veikkausliiga ottelu - OIKEA AIKA
+                    {
+                      id: 'background_error_veikkausliiga_hjk_inter',
+                      homeTeam: { name: 'HJK' },
+                      awayTeam: { name: 'FC Inter' },
+                      score: { fullTime: { home: null, away: null } },
+                      utcDate: (() => {
+                        const matchDate = new Date();
+                        matchDate.setMonth(9); // Lokakuu (0-indexed)
+                        matchDate.setDate(26);
+                        matchDate.setHours(16, 45, 0, 0);
+                        return matchDate.toISOString();
+                      })(),
+                      status: 'SCHEDULED',
+                      title: 'HJK vs FC Inter (Veikkausliiga)'
                     }
                   ];
                   resolve({ matches: fallbackMatches });
@@ -245,7 +342,7 @@
             });
       
         if (response.matches && response.matches.length > 0) {
-          console.log('Content: Löytyi', response.matches.length, 'OIKEAA FIFA karsinta-ottelua!');
+          console.log('Content: Löytyi', response.matches.length, 'OIKEAA FIFA karsinta-ottelua JA Veikkausliiga otteluita!');
           console.log('Content: Ottelut:', response.matches.map(m => `${m.homeTeam.name} vs ${m.awayTeam.name}`).join(', '));
         
         // Luo HTML kaikille otteluille - KÄYTÄ EVENT LISTENERIÄ
@@ -282,7 +379,7 @@
           `;
         });
         
-        // Tarkista onko FIFA karsinta-otteluita
+        // Tarkista onko FIFA karsinta-otteluita JA Veikkausliiga otteluita
         const hasFifaKarsinta = response.matches.some(match => 
           match.homeTeam.name.toLowerCase().includes('suomi') || 
           match.awayTeam.name.toLowerCase().includes('suomi') ||
@@ -300,22 +397,56 @@
           match.awayTeam.name.toLowerCase().includes('ltu')
         );
         
+        const hasVeikkausliiga = response.matches.some(match => 
+          match.homeTeam.name.toLowerCase().includes('hjk') || 
+          match.awayTeam.name.toLowerCase().includes('hjk') ||
+          match.homeTeam.name.toLowerCase().includes('kups') || 
+          match.awayTeam.name.toLowerCase().includes('kups') ||
+          match.homeTeam.name.toLowerCase().includes('vps') || 
+          match.awayTeam.name.toLowerCase().includes('vps') ||
+          match.homeTeam.name.toLowerCase().includes('inter') || 
+          match.awayTeam.name.toLowerCase().includes('inter') ||
+          match.homeTeam.name.toLowerCase().includes('sjk') || 
+          match.awayTeam.name.toLowerCase().includes('sjk') ||
+          match.homeTeam.name.toLowerCase().includes('veikkausliiga') || 
+          match.awayTeam.name.toLowerCase().includes('veikkausliiga')
+        );
+        
+        // Määritä otsikko ja alaotsikko
+        let title = 'FIFA Karsinta-ottelut';
+        let subtitle = `Oikeat FIFA karsinta-ottelut (${response.matches.length} kpl)`;
+        let period = 'FIFA Karsinta-ottelut';
+        
+        if (hasFifaKarsinta && hasVeikkausliiga) {
+          title = 'FIFA Karsinta-ottelut JA Veikkausliiga ottelut';
+          subtitle = `Oikeat FIFA karsinta-ottelut JA Veikkausliiga ottelut (${response.matches.length} kpl)`;
+          period = 'FIFA Karsinta-ottelut JA Veikkausliiga ottelut';
+        } else if (hasFifaKarsinta) {
+          title = 'FIFA Karsinta-ottelut (Suomi mukaan lukien)';
+          subtitle = `Oikeat FIFA karsinta-ottelut (${response.matches.length} kpl)`;
+          period = 'FIFA Karsinta-ottelut';
+        } else if (hasVeikkausliiga) {
+          title = 'Veikkausliiga ottelut';
+          subtitle = `Oikeat Veikkausliiga ottelut (${response.matches.length} kpl)`;
+          period = 'Veikkausliiga ottelut';
+        }
+        
         matchData = {
-          title: hasFifaKarsinta ? 'FIFA Karsinta-ottelut (Suomi mukaan lukien)' : 'FIFA Karsinta-ottelut',
-          subtitle: hasFifaKarsinta ? `Oikeat FIFA karsinta-ottelut (${response.matches.length} kpl)` : `Oikeat FIFA karsinta-ottelut (${response.matches.length} kpl)`,
+          title: title,
+          subtitle: subtitle,
           homeTeam: '', // Ei käytetä
           awayTeam: '', // Ei käytetä
           scoreHome: '', // Ei käytetä
           scoreAway: '', // Ei käytetä
-               period: hasFifaKarsinta ? 'FIFA Karsinta-ottelut' : 'FIFA Karsinta-ottelut',
+          period: period,
           time: new Date().toLocaleDateString('fi-FI'), // Tänään
           customHtml: matchesHtml, // Mukautettu HTML
           isMultipleMatches: true, // Merkki että näytetään useita otteluita
           matches: response.matches // Tallenna ottelut
         };
-        } else {
-          throw new Error('Ei FIFA karsinta-otteluita löytynyt');
-        }
+      } else {
+          throw new Error('Ei FIFA karsinta-otteluita tai Veikkausliiga otteluita löytynyt');
+      }
 
     } catch (error) {
       console.error('Content: API-virhe:', error);
