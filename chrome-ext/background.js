@@ -109,7 +109,6 @@ async function fetchYleAreenaMatches() {
           
           // Etsi Suomi - Liettua
           const suomiLiettuaPattern = /Suomi\s*-\s*Liettua/g;
-          let match;
           while ((match = suomiLiettuaPattern.exec(html)) !== null) {
             // Tänään klo 18.50
             const today = new Date();
