@@ -182,19 +182,6 @@
                 const fallbackMatches = [
                   // FIFA karsinta-ottelut
                   {
-                    id: 'timeout_fifa_suomi_liettua',
-                    homeTeam: { name: 'Suomi' },
-                    awayTeam: { name: 'Liettua' },
-                    score: { fullTime: { home: null, away: null } },
-                    utcDate: (() => {
-                      const today = new Date();
-                      today.setHours(18, 50, 0, 0);
-                      return today.toISOString();
-                    })(),
-                    status: 'SCHEDULED',
-                    title: 'Suomi vs Liettua (FIFA Karsinta)'
-                  },
-                  {
                     id: 'timeout_fifa_hollanti_suomi',
                     homeTeam: { name: 'Hollanti' },
                     awayTeam: { name: 'Suomi' },
@@ -240,19 +227,6 @@
                   const fallbackMatches = [
                     // FIFA karsinta-ottelut
                     {
-                      id: 'runtime_error_fifa_suomi_liettua',
-                      homeTeam: { name: 'Suomi' },
-                      awayTeam: { name: 'Liettua' },
-                      score: { fullTime: { home: null, away: null } },
-                      utcDate: (() => {
-                        const today = new Date();
-                        today.setHours(18, 50, 0, 0);
-                        return today.toISOString();
-                      })(),
-                      status: 'SCHEDULED',
-                      title: 'Suomi vs Liettua (FIFA Karsinta)'
-                    },
-                    {
                       id: 'runtime_error_fifa_hollanti_suomi',
                       homeTeam: { name: 'Hollanti' },
                       awayTeam: { name: 'Suomi' },
@@ -292,19 +266,6 @@
                   // Käytä fallback-dataa background errorin sijaan
                   const fallbackMatches = [
                     // FIFA karsinta-ottelut
-                    {
-                      id: 'background_error_fifa_suomi_liettua',
-                      homeTeam: { name: 'Suomi' },
-                      awayTeam: { name: 'Liettua' },
-                      score: { fullTime: { home: null, away: null } },
-                      utcDate: (() => {
-                        const today = new Date();
-                        today.setHours(18, 50, 0, 0);
-                        return today.toISOString();
-                      })(),
-                      status: 'SCHEDULED',
-                      title: 'Suomi vs Liettua (FIFA Karsinta)'
-                    },
                     {
                       id: 'background_error_fifa_hollanti_suomi',
                       homeTeam: { name: 'Hollanti' },

@@ -37,19 +37,6 @@ function App() {
       const realMatches = [
         // FIFA karsinta-ottelut
         {
-          id: 'fifa_karsinta_1',
-          homeTeam: { name: 'Suomi' },
-          awayTeam: { name: 'Liettua' },
-          score: { fullTime: { home: null, away: null } },
-          utcDate: (() => {
-            const today = new Date();
-            today.setHours(18, 50, 0, 0);
-            return today.toISOString();
-          })(),
-          status: 'SCHEDULED',
-          title: 'Suomi vs Liettua (FIFA Karsinta)'
-        },
-        {
           id: 'fifa_karsinta_2',
           homeTeam: { name: 'Hollanti' },
           awayTeam: { name: 'Suomi' },

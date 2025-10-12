@@ -17,19 +17,6 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
         const fallbackMatches = [
           // FIFA karsinta-ottelut
           {
-            id: 'error_fifa_suomi_liettua',
-            homeTeam: { name: 'Suomi' },
-            awayTeam: { name: 'Liettua' },
-            score: { fullTime: { home: null, away: null } },
-            utcDate: (() => {
-              const today = new Date();
-              today.setHours(18, 50, 0, 0);
-              return today.toISOString();
-            })(),
-            status: 'SCHEDULED',
-            title: 'Suomi vs Liettua (FIFA Karsinta)'
-          },
-          {
             id: 'error_fifa_hollanti_suomi',
             homeTeam: { name: 'Hollanti' },
             awayTeam: { name: 'Suomi' },
@@ -107,22 +94,6 @@ async function fetchYleAreenaMatches() {
           // Etsi jalkapallo-otteluita HTML:stä
           const matches = [];
           
-          // Etsi Suomi - Liettua
-          const suomiLiettuaPattern = /Suomi\s*-\s*Liettua/g;
-          while ((match = suomiLiettuaPattern.exec(html)) !== null) {
-            // Tänään klo 18.50
-            const today = new Date();
-            today.setHours(18, 50, 0, 0);
-            matches.push({
-              id: 'yle_suomi_liettua',
-              homeTeam: { name: 'Suomi' },
-              awayTeam: { name: 'Liettua' },
-              score: { fullTime: { home: null, away: null } },
-              utcDate: today.toISOString(),
-              status: 'SCHEDULED',
-              title: 'Suomi vs Liettua (FIFA Karsinta)'
-            });
-          }
           
           // Etsi Hollanti - Suomi
           const hollantiSuomiPattern = /Hollanti\s*-\s*Suomi/g;
@@ -209,19 +180,6 @@ async function fetchYleAreenaMatches() {
     console.log('Background: Web scraping ei toimi, käytetään fallback-dataa');
     const fallbackMatches = [
       // FIFA karsinta-ottelut
-      {
-        id: 'fallback_suomi_liettua',
-        homeTeam: { name: 'Suomi' },
-        awayTeam: { name: 'Liettua' },
-        score: { fullTime: { home: null, away: null } },
-        utcDate: (() => {
-          const today = new Date();
-          today.setHours(18, 50, 0, 0);
-          return today.toISOString();
-        })(),
-        status: 'SCHEDULED',
-        title: 'Suomi vs Liettua (FIFA Karsinta)'
-      },
       {
         id: 'fallback_hollanti_suomi',
         homeTeam: { name: 'Hollanti' },
