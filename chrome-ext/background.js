@@ -22,10 +22,11 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
             awayTeam: { name: 'Suomi' },
             score: { fullTime: { home: null, away: null } },
             utcDate: (() => {
-              const sunday = new Date();
-              sunday.setDate(sunday.getDate() + (7 - sunday.getDay()));
-              sunday.setHours(18, 50, 0, 0);
-              return sunday.toISOString();
+              const today = new Date();
+              today.setMonth(9); // Lokakuu (0-indexed)
+              today.setDate(12);
+              today.setHours(19, 0, 0, 0);
+              return today.toISOString();
             })(),
             status: 'SCHEDULED',
             title: 'Hollanti vs Suomi (FIFA Karsinta)'
@@ -98,10 +99,11 @@ async function fetchYleAreenaMatches() {
           // Etsi Hollanti - Suomi
           const hollantiSuomiPattern = /Hollanti\s*-\s*Suomi/g;
           while ((match = hollantiSuomiPattern.exec(html)) !== null) {
-            // Su 12.10 klo 18.50
-            const sunday = new Date();
-            sunday.setDate(sunday.getDate() + (7 - sunday.getDay())); // Seuraava sunnuntai
-            sunday.setHours(18, 50, 0, 0);
+            // 12.10 klo 19:00
+            const today = new Date();
+            today.setMonth(9); // Lokakuu (0-indexed)
+            today.setDate(12);
+            today.setHours(19, 0, 0, 0);
             matches.push({
               id: 'yle_hollanti_suomi',
               homeTeam: { name: 'Hollanti' },
@@ -186,10 +188,11 @@ async function fetchYleAreenaMatches() {
         awayTeam: { name: 'Suomi' },
         score: { fullTime: { home: null, away: null } },
         utcDate: (() => {
-          const sunday = new Date();
-          sunday.setDate(sunday.getDate() + (7 - sunday.getDay()));
-          sunday.setHours(18, 50, 0, 0);
-          return sunday.toISOString();
+          const today = new Date();
+          today.setMonth(9); // Lokakuu (0-indexed)
+          today.setDate(12);
+          today.setHours(19, 0, 0, 0);
+          return today.toISOString();
         })(),
         status: 'SCHEDULED',
         title: 'Hollanti vs Suomi (FIFA Karsinta)'

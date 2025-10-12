@@ -42,10 +42,11 @@ function App() {
           awayTeam: { name: 'Suomi' },
           score: { fullTime: { home: null, away: null } },
           utcDate: (() => {
-            const sunday = new Date();
-            sunday.setDate(sunday.getDate() + (7 - sunday.getDay()));
-            sunday.setHours(18, 50, 0, 0);
-            return sunday.toISOString();
+            const today = new Date();
+            today.setMonth(9); // Lokakuu (0-indexed)
+            today.setDate(12);
+            today.setHours(19, 0, 0, 0);
+            return today.toISOString();
           })(),
           status: 'SCHEDULED',
           title: 'Hollanti vs Suomi (FIFA Karsinta)'
