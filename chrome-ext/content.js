@@ -9,7 +9,7 @@
     .ao-backdrop {
       position: fixed;
       inset: 0;
-      background: rgba(0,0,0,0.3);
+      background: rgba(0,0,0,0.5);
       display: none;
       align-items: center;
       justify-content: center;
@@ -17,14 +17,16 @@
       z-index: 2147483647;
     }
     .ao-panel {
-      background: rgba(18, 20, 23, 0.85); color: #fff;
+      background: linear-gradient(135deg, #1a1d29 0%, #2d3142 100%);
+      color: #fff;
       width: min(720px, 92vw);
-      border-radius: 12px;
-      box-shadow: 0 4px 15px rgba(0,0,0,0.2);
-      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 16px;
+      box-shadow: 0 8px 32px rgba(0,0,0,0.4), 0 0 0 1px rgba(255,255,255,0.1);
+      border: 1px solid rgba(255,255,255,0.15);
       font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial;
+      backdrop-filter: blur(10px);
     }
-    .ao-hdr { display:flex; align-items:center; justify-content:space-between; padding:16px 20px; border-bottom:1px solid rgba(255,255,255,0.08); }
+    .ao-hdr { display:flex; align-items:center; justify-content:space-between; padding:20px 24px; border-bottom:1px solid rgba(255,255,255,0.12); background: rgba(255,255,255,0.03); }
     .ao-title { font-weight:700; font-size:20px; }
     .ao-sub { opacity:.8; font-size:14px; }
     .ao-close { background:transparent; border:none; color:#fff; font-size:24px; cursor:pointer; line-height:1; }
@@ -34,7 +36,7 @@
     .ao-num { font-size:42px; font-weight:800; }
     .ao-div { font-size:32px; opacity:.7; }
     .ao-meta { display:flex; align-items:center; justify-content:center; gap:10px; padding:0 20px 10px; opacity:.9; }
-    .ao-dot { width:6px; height:6px; border-radius:50%; background:#4aa3ff; }
+    .ao-dot { width:6px; height:6px; border-radius:50%; background:#00d4ff; }
     .ao-stats { padding:10px 20px 20px; display:grid; grid-template-columns:1fr auto; row-gap:10px; }
     .ao-row { display:contents; }
     .ao-l { text-align:left; opacity:.9; }
@@ -42,8 +44,8 @@
     .ao-loading, .ao-error { padding:40px; text-align:center; font-size:18px; color:#fff; }
     .ao-loading { opacity:0.8; }
     .ao-error { color:#ff6b6b; }
-    .ao-stats-btn:hover { background: #3a8bdf !important; }
-    .ao-back-btn:hover { background: #555 !important; }
+    .ao-stats-btn:hover { background: #00d4ff !important; }
+    .ao-back-btn:hover { background: #4a5568 !important; }
   `;
   document.documentElement.appendChild(style);
 
