@@ -36,21 +36,6 @@ function App() {
       console.log('App: Palautetaan oikeat FIFA karsinta-ottelut JA Veikkausliiga ottelut');
       const realMatches = [
         // FIFA karsinta-ottelut
-        {
-          id: 'fifa_karsinta_2',
-          homeTeam: { name: 'Hollanti' },
-          awayTeam: { name: 'Suomi' },
-          score: { fullTime: { home: null, away: null } },
-          utcDate: (() => {
-            const today = new Date();
-            today.setMonth(9); // Lokakuu (0-indexed)
-            today.setDate(12);
-            today.setHours(19, 0, 0, 0);
-            return today.toISOString();
-          })(),
-          status: 'SCHEDULED',
-          title: 'Hollanti vs Suomi (FIFA Karsinta)'
-        },
         // Veikkausliiga ottelut
         {
           id: 'veikkausliiga_1',

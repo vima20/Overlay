@@ -16,21 +16,6 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
         // Lähetä fallback-data vaikka virhe tapahtuisi
         const fallbackMatches = [
           // FIFA karsinta-ottelut
-          {
-            id: 'error_fifa_hollanti_suomi',
-            homeTeam: { name: 'Hollanti' },
-            awayTeam: { name: 'Suomi' },
-            score: { fullTime: { home: null, away: null } },
-            utcDate: (() => {
-              const today = new Date();
-              today.setMonth(9); // Lokakuu (0-indexed)
-              today.setDate(12);
-              today.setHours(19, 0, 0, 0);
-              return today.toISOString();
-            })(),
-            status: 'SCHEDULED',
-            title: 'Hollanti vs Suomi (FIFA Karsinta)'
-          },
           // Veikkausliiga ottelu - OIKEA AIKA
           {
             id: 'error_veikkausliiga_hjk_inter',
@@ -96,24 +81,6 @@ async function fetchYleAreenaMatches() {
           const matches = [];
           
           
-          // Etsi Hollanti - Suomi
-          const hollantiSuomiPattern = /Hollanti\s*-\s*Suomi/g;
-          while ((match = hollantiSuomiPattern.exec(html)) !== null) {
-            // 12.10 klo 19:00
-            const today = new Date();
-            today.setMonth(9); // Lokakuu (0-indexed)
-            today.setDate(12);
-            today.setHours(19, 0, 0, 0);
-            matches.push({
-              id: 'yle_hollanti_suomi',
-              homeTeam: { name: 'Hollanti' },
-              awayTeam: { name: 'Suomi' },
-              score: { fullTime: { home: null, away: null } },
-              utcDate: sunday.toISOString(),
-              status: 'SCHEDULED',
-              title: 'Hollanti vs Suomi (FIFA Karsinta)'
-            });
-          }
           
           // Etsi Veikkausliiga otteluita - OIKEAT AJAT
           const veikkausliigaMatches = [];
@@ -182,21 +149,6 @@ async function fetchYleAreenaMatches() {
     console.log('Background: Web scraping ei toimi, käytetään fallback-dataa');
     const fallbackMatches = [
       // FIFA karsinta-ottelut
-      {
-        id: 'fallback_hollanti_suomi',
-        homeTeam: { name: 'Hollanti' },
-        awayTeam: { name: 'Suomi' },
-        score: { fullTime: { home: null, away: null } },
-        utcDate: (() => {
-          const today = new Date();
-          today.setMonth(9); // Lokakuu (0-indexed)
-          today.setDate(12);
-          today.setHours(19, 0, 0, 0);
-          return today.toISOString();
-        })(),
-        status: 'SCHEDULED',
-        title: 'Hollanti vs Suomi (FIFA Karsinta)'
-      },
       // Veikkausliiga ottelu - OIKEA AIKA
       {
         id: 'fallback_hjk_inter',
