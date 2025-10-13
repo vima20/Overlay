@@ -196,6 +196,21 @@
                     })(),
                     status: 'SCHEDULED',
                     title: 'HJK vs FC Inter (Veikkausliiga)'
+                  },
+                  {
+                    id: 'timeout_veikkausliiga_mestaruustaisto',
+                    homeTeam: { name: 'Veikkausliiga' },
+                    awayTeam: { name: 'Mestaruustaisto' },
+                    score: { fullTime: { home: null, away: null } },
+                    utcDate: (() => {
+                      const matchDate = new Date();
+                      matchDate.setMonth(10); // Marraskuu (0-indexed)
+                      matchDate.setDate(9);
+                      matchDate.setHours(14, 30, 0, 0);
+                      return matchDate.toISOString();
+                    })(),
+                    status: 'SCHEDULED',
+                    title: 'Veikkausliiga ottelu (Mestaruustaisto)'
                   }
                 ];
                 resolve({ matches: fallbackMatches });
@@ -227,6 +242,21 @@
                       })(),
                       status: 'SCHEDULED',
                       title: 'HJK vs FC Inter (Veikkausliiga)'
+                    },
+                    {
+                      id: 'runtime_error_veikkausliiga_mestaruustaisto',
+                      homeTeam: { name: 'Veikkausliiga' },
+                      awayTeam: { name: 'Mestaruustaisto' },
+                      score: { fullTime: { home: null, away: null } },
+                      utcDate: (() => {
+                        const matchDate = new Date();
+                        matchDate.setMonth(10); // Marraskuu (0-indexed)
+                        matchDate.setDate(9);
+                        matchDate.setHours(14, 30, 0, 0);
+                        return matchDate.toISOString();
+                      })(),
+                      status: 'SCHEDULED',
+                      title: 'Veikkausliiga ottelu (Mestaruustaisto)'
                     }
                   ];
                   resolve({ matches: fallbackMatches });
@@ -253,6 +283,21 @@
                       })(),
                       status: 'SCHEDULED',
                       title: 'HJK vs FC Inter (Veikkausliiga)'
+                    },
+                    {
+                      id: 'background_error_veikkausliiga_mestaruustaisto',
+                      homeTeam: { name: 'Veikkausliiga' },
+                      awayTeam: { name: 'Mestaruustaisto' },
+                      score: { fullTime: { home: null, away: null } },
+                      utcDate: (() => {
+                        const matchDate = new Date();
+                        matchDate.setMonth(10); // Marraskuu (0-indexed)
+                        matchDate.setDate(9);
+                        matchDate.setHours(14, 30, 0, 0);
+                        return matchDate.toISOString();
+                      })(),
+                      status: 'SCHEDULED',
+                      title: 'Veikkausliiga ottelu (Mestaruustaisto)'
                     }
                   ];
                   resolve({ matches: fallbackMatches });

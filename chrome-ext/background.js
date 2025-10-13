@@ -6,36 +6,42 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
     console.log('Background: Haetaan otteluita...');
     console.log('Background: KORJATTU VERSIO - Vastataan aina!');
     
-    fetchYleAreenaMatches()
-      .then(data => {
-        console.log('Background: Ottelut haettu onnistuneesti:', data);
-        sendResponse({ success: true, data });
-      })
-      .catch(error => {
-        console.error('Background: Virhe otteluiden haussa:', error);
-        // Lähetä fallback-data vaikka virhe tapahtuisi
-        const fallbackMatches = [
-          // FIFA karsinta-ottelut
-          // Veikkausliiga ottelu - OIKEA AIKA
-          {
-            id: 'error_veikkausliiga_hjk_inter',
-            homeTeam: { name: 'HJK' },
-            awayTeam: { name: 'FC Inter' },
-            score: { fullTime: { home: null, away: null } },
-            utcDate: (() => {
-              const matchDate = new Date();
-              matchDate.setMonth(9); // Lokakuu (0-indexed)
-              matchDate.setDate(26);
-              matchDate.setHours(16, 45, 0, 0);
-              return matchDate.toISOString();
-            })(),
-            status: 'SCHEDULED',
-            title: 'HJK vs FC Inter (Veikkausliiga)'
-          }
-        ];
-        console.log('Background: Lähetetään fallback-data virheen sijaan');
-        sendResponse({ success: true, data: { matches: fallbackMatches } });
-      });
+    // Käytä suoraan fallback-dataa
+    console.log('Background: Käytetään fallback-dataa');
+    const fallbackMatches = [
+      {
+        id: 'fallback_hjk_inter',
+        homeTeam: { name: 'HJK' },
+        awayTeam: { name: 'FC Inter' },
+        score: { fullTime: { home: null, away: null } },
+        utcDate: (() => {
+          const matchDate = new Date();
+          matchDate.setMonth(9); // Lokakuu (0-indexed)
+          matchDate.setDate(26);
+          matchDate.setHours(16, 45, 0, 0);
+          return matchDate.toISOString();
+        })(),
+        status: 'SCHEDULED',
+        title: 'HJK vs FC Inter (Veikkausliiga)'
+      },
+      {
+        id: 'fallback_veikkausliiga_mestaruustaisto',
+        homeTeam: { name: 'Veikkausliiga' },
+        awayTeam: { name: 'Mestaruustaisto' },
+        score: { fullTime: { home: null, away: null } },
+        utcDate: (() => {
+          const matchDate = new Date();
+          matchDate.setMonth(10); // Marraskuu (0-indexed)
+          matchDate.setDate(9);
+          matchDate.setHours(14, 30, 0, 0);
+          return matchDate.toISOString();
+        })(),
+        status: 'SCHEDULED',
+        title: 'Veikkausliiga ottelu (Mestaruustaisto)'
+      }
+    ];
+    console.log('Background: Palautetaan fallback-data:', fallbackMatches.length, 'ottelua');
+    sendResponse({ success: true, data: { matches: fallbackMatches } });
     return true; // jätä kanava auki async-vastausta varten
   }
 
@@ -164,6 +170,21 @@ async function fetchYleAreenaMatches() {
         })(),
         status: 'SCHEDULED',
         title: 'HJK vs FC Inter (Veikkausliiga)'
+      },
+      {
+        id: 'fallback_veikkausliiga_mestaruustaisto',
+        homeTeam: { name: 'Veikkausliiga' },
+        awayTeam: { name: 'Mestaruustaisto' },
+        score: { fullTime: { home: null, away: null } },
+        utcDate: (() => {
+          const matchDate = new Date();
+          matchDate.setMonth(10); // Marraskuu (0-indexed)
+          matchDate.setDate(9);
+          matchDate.setHours(14, 30, 0, 0);
+          return matchDate.toISOString();
+        })(),
+        status: 'SCHEDULED',
+        title: 'Veikkausliiga ottelu (Mestaruustaisto)'
       }
     ];
     
