@@ -4,6 +4,16 @@
   let matchData = null;
   let loading = false;
 
+  // Suorat Areena-linkit tarkkoihin otteluihin (muokkaa tähän oikeat ohjelma-URL:t)
+  const MATCH_STREAM_URLS = {
+    'HJK vs FC Inter': 'https://areena.yle.fi/1-73014212',
+    'Veikkausliiga vs Mestaruustaisto': 'https://areena.yle.fi/1-73014211'
+  };
+  function resolveStreamUrl(homeName, awayName) {
+    const key = `${homeName} vs ${awayName}`.trim();
+    return MATCH_STREAM_URLS[key] || 'https://areena.yle.fi/tv/urheilu';
+  }
+
   const style = document.createElement('style');
   style.textContent = `
     .ao-backdrop {
@@ -324,6 +334,9 @@
             minute: '2-digit'
           }) : 'Tuntematon';
           
+          // Suora linkki, jos tiedossa (muuten urheilusivu)
+          const streamUrl = resolveStreamUrl(match.homeTeam?.name, match.awayTeam?.name);
+          
           matchesHtml += `
             <div class="ao-match" style="border-bottom: 1px solid rgba(255,255,255,0.1); padding: 15px 0; ${index === response.matches.length - 1 ? 'border-bottom: none;' : ''}">
               <div class="ao-match-header" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
@@ -340,6 +353,12 @@
                 <div class="ao-match-team" style="flex: 1; text-align: right;">
                   <div class="ao-match-team-name" style="font-size: 14px; font-weight: 600;">${match.awayTeam.name}</div>
                 </div>
+              </div>
+              <div style="display: flex; justify-content: flex-end; margin-top: 10px;">
+                <a href="${streamUrl}" target="_blank" rel="noopener noreferrer" 
+                   style="background: #00d4ff; color: #001018; text-decoration: none; font-weight: 600; font-size: 12px; padding: 6px 10px; border-radius: 6px; transition: background-color 0.2s;">
+                  Avaa Areena
+                </a>
               </div>
             </div>
           `;

@@ -25,6 +25,12 @@ function App() {
     return () => window.removeEventListener("keydown", handleKeyDown);
   }, [matchData]);
 
+  // Suorat Areena-linkit (sama logiikka kuin extensionissa)
+  const STREAM_URLS = {
+    'HJK vs FC Inter': 'https://areena.yle.fi/1-73014212',
+    'Veikkausliiga vs Mestaruustaisto': 'https://areena.yle.fi/1-73014211'
+  };
+
   const fetchLiveScore = async () => {
     setLoading(true);
     
@@ -85,7 +91,8 @@ function App() {
           awayTeam: match.awayTeam.name,
           homeScore: match.score.fullTime?.home || '?',
           awayScore: match.score.fullTime?.away || '?',
-          status: match.status
+          status: match.status,
+          streamUrl: STREAM_URLS[`${match.homeTeam.name} vs ${match.awayTeam.name}`] || 'https://areena.yle.fi/tv/urheilu'
         }))
       });
       
@@ -147,6 +154,9 @@ function App() {
                           <div className="Team-name">{match.awayTeam}</div>
                         </div>
                         <div className="Match-status">{match.status === 'SCHEDULED' ? 'Tulossa' : match.status}</div>
+                        <div style={{ marginLeft: 12 }}>
+                          <a href={match.streamUrl} target="_blank" rel="noopener noreferrer" className="Stats-button">Katso Areenassa</a>
+                        </div>
                       </div>
                     ))}
                   </div>
