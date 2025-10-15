@@ -145,17 +145,28 @@ function App() {
 
                 {matchData.matches.length > 0 ? (
                   <div className="Overlay-matches">
-                    {matchData.matches.map((match) => (
-                      <div key={match.id} className="Match-row">
-                        <div className="Match-time">{match.time}</div>
-                        <div className="Match-teams">
-                          <div className="Team-name">{match.homeTeam}</div>
-                          <div className="Match-score">{match.homeScore} - {match.awayScore}</div>
-                          <div className="Team-name">{match.awayTeam}</div>
+                    {matchData.matches.map((match, index) => (
+                      <div key={match.id} className="ao-match" style={{borderBottom: '1px solid rgba(255,255,255,0.1)', padding: '15px 0', borderBottom: index === matchData.matches.length - 1 ? 'none' : '1px solid rgba(255,255,255,0.1)'}}>
+                        <div className="ao-match-header" style={{display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '10px'}}>
+                          <div className="ao-match-time" style={{fontSize: '12px', opacity: 0.7}}>{match.time}</div>
+                          <div className="ao-match-status" style={{fontSize: '12px', opacity: 0.7}}>{match.status === 'SCHEDULED' ? 'Tulossa' : match.status}</div>
                         </div>
-                        <div className="Match-status">{match.status === 'SCHEDULED' ? 'Tulossa' : match.status}</div>
-                        <div style={{ marginLeft: 12 }}>
-                          <a href={match.streamUrl} target="_blank" rel="noopener noreferrer" className="Stats-button">Katso Areenassa</a>
+                        <div className="ao-match-teams" style={{display: 'flex', justifyContent: 'space-between', alignItems: 'center'}}>
+                          <div className="ao-match-team" style={{flex: 1, textAlign: 'left'}}>
+                            <div className="ao-match-team-name" style={{fontSize: '14px', fontWeight: 600}}>{match.homeTeam}</div>
+                          </div>
+                          <div className="ao-match-score" style={{fontSize: '18px', fontWeight: 800, margin: '0 15px'}}>
+                            {match.homeScore} - {match.awayScore}
+                          </div>
+                          <div className="ao-match-team" style={{flex: 1, textAlign: 'right'}}>
+                            <div className="ao-match-team-name" style={{fontSize: '14px', fontWeight: 600}}>{match.awayTeam}</div>
+                          </div>
+                        </div>
+                        <div style={{display: 'flex', justifyContent: 'flex-end', marginTop: '10px'}}>
+                          <a href={match.streamUrl} target="_blank" rel="noopener noreferrer" 
+                             style={{background: '#00d4ff', color: '#001018', textDecoration: 'none', fontWeight: 600, fontSize: '12px', padding: '6px 10px', borderRadius: '6px', transition: 'background-color 0.2s'}}>
+                            Katso Areenassa
+                          </a>
                         </div>
                       </div>
                     ))}
