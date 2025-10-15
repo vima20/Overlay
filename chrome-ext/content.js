@@ -56,6 +56,8 @@
     .ao-error { color:#ff6b6b; }
     .ao-stats-btn:hover { background: #00d4ff !important; }
     .ao-back-btn:hover { background: #4a5568 !important; }
+    .ao-match:hover { background: rgba(255,255,255,0.05); transition: background-color 0.2s ease; }
+    .ao-match a:hover { background: #00b8e6 !important; transform: translateY(-1px); }
   `;
   document.documentElement.appendChild(style);
 
