@@ -274,13 +274,13 @@
   border-color: rgba(255, 255, 255, 0.4);
 }
 
-/* Hover-efektit */
-.Match-row:hover {
+/* Hover-efektit - sama kuin extension */
+.ao-match:hover {
   background: rgba(255, 255, 255, 0.05);
   transition: background-color 0.2s ease;
 }
 
-.Stats-button:hover {
+.ao-match a:hover {
   background: #00b8e6 !important;
   transform: translateY(-1px);
   transition: all 0.2s ease;
