@@ -300,3 +300,91 @@
 .Error {
   color: #ff6b6b;
 }
+
+/* MOBIILI-OPTIMOINTI */
+@media (max-width: 768px) {
+  .App-header {
+    min-height: 100vh;
+    padding: 20px 10px;
+    font-size: 16px;
+  }
+  
+  .App-header p {
+    font-size: 14px;
+    padding: 0 10px;
+    line-height: 1.4;
+  }
+  
+  .Overlay-backdrop {
+    padding: 10px;
+  }
+  
+  .Overlay-panel {
+    width: 95vw;
+    max-width: 95vw;
+    height: 90vh;
+    margin: 0;
+    border-radius: 12px;
+  }
+  
+  .Overlay-header {
+    padding: 15px 20px;
+  }
+  
+  .Overlay-title {
+    font-size: 18px;
+  }
+  
+  .Overlay-subtitle {
+    font-size: 12px;
+  }
+  
+  .Overlay-close {
+    font-size: 28px;
+    padding: 10px;
+  }
+  
+  .ao-match {
+    padding: 15px 20px;
+  }
+  
+  .ao-match-team-name {
+    font-size: 15px;
+  }
+  
+  .ao-match-score {
+    font-size: 18px;
+  }
+  
+  .ao-match-time {
+    font-size: 12px;
+  }
+  
+  .ao-match-status {
+    font-size: 12px;
+  }
+  
+  .ao-match a {
+    padding: 10px 15px;
+    font-size: 14px;
+  }
+}
+
+/* Touch-optimointi */
+@media (hover: none) and (pointer: coarse) {
+  .ao-match a {
+    padding: 12px 18px;
+    font-size: 16px;
+    min-height: 44px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  
+  .Overlay-close {
+    font-size: 32px;
+    padding: 12px;
+    min-width: 44px;
+    min-height: 44px;
+  }
+}

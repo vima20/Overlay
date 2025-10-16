@@ -7,6 +7,7 @@ function App() {
   const [matchData, setMatchData] = useState(null);
   const [loading, setLoading] = useState(false);
 
+  // NÄPPÄINKOMENNOT (toimii kaikilla laitteilla)
   useEffect(() => {
     function handleKeyDown(event) {
       if (event.ctrlKey && event.key === "k") {
@@ -25,7 +26,23 @@ function App() {
     return () => window.removeEventListener("keydown", handleKeyDown);
   }, [matchData]);
 
-  // Suorat Areena-linkit (sama logiikka kuin extensionissa)
+  // TOUCH-GESTURES (toimii mobiilissa)
+  useEffect(() => {
+    const handleTouch = (e) => {
+      if (e.touches.length === 2) {
+        e.preventDefault();
+        setIsOverlayOpen((prev) => !prev);
+        if (!matchData) {
+          fetchLiveScore();
+        }
+      }
+    };
+    
+    document.addEventListener('touchstart', handleTouch, { passive: false });
+    return () => document.removeEventListener('touchstart', handleTouch);
+  }, [matchData]);
+
+  // Suorat Areena-linkit
   const STREAM_URLS = {
     'HJK vs FC Inter': 'https://areena.yle.fi/1-73014212',
     'Veikkausliiga vs Mestaruustaisto': 'https://areena.yle.fi/1-73014211'
@@ -35,14 +52,7 @@ function App() {
     setLoading(true);
     
     try {
-      console.log('App: Haetaan OIKEITA FIFA karsinta-otteluita JA Veikkausliiga otteluita!');
-      console.log('App: Käytetään suoraan oikeita otteluita!');
-      
-      // Palauta suoraan oikeat FIFA karsinta-ottelut JA Veikkausliiga ottelut (SAMA KUIN EXTENSION)
-      console.log('App: Palautetaan oikeat FIFA karsinta-ottelut JA Veikkausliiga ottelut');
       const realMatches = [
-        // FIFA karsinta-ottelut
-        // Veikkausliiga ottelut
         {
           id: 'veikkausliiga_1',
           homeTeam: { name: 'HJK' },
@@ -50,7 +60,7 @@ function App() {
           score: { fullTime: { home: null, away: null } },
           utcDate: (() => {
             const matchDate = new Date();
-            matchDate.setMonth(9); // Lokakuu (0-indexed)
+            matchDate.setMonth(9);
             matchDate.setDate(26);
             matchDate.setHours(16, 45, 0, 0);
             return matchDate.toISOString();
@@ -65,7 +75,7 @@ function App() {
           score: { fullTime: { home: null, away: null } },
           utcDate: (() => {
             const matchDate = new Date();
-            matchDate.setMonth(10); // Marraskuu (0-indexed)
+            matchDate.setMonth(10);
             matchDate.setDate(9);
             matchDate.setHours(14, 30, 0, 0);
             return matchDate.toISOString();
@@ -74,8 +84,6 @@ function App() {
           title: 'Veikkausliiga ottelu (Mestaruustaisto)'
         }
       ];
-      
-      console.log('App: Palautetaan', realMatches.length, 'OIKEAA FIFA karsinta-ottelua JA Veikkausliiga ottelua!');
       
       setMatchData({
         title: "FIFA Karsinta-ottelut JA Veikkausliiga ottelut",
@@ -104,13 +112,37 @@ function App() {
     }
   };
 
-
   return (
     <div className="App">
       <header className="App-header">
         <img src={logo} className="App-logo" alt="logo" />
-        {/* MUUTA: Champions League → FIFA karsinta-ottelut JA Veikkausliiga ottelut */}
-        <p>Paina Ctrl+K avataksesi/sulkeaksesi FIFA karsinta-otteluiden JA Veikkausliiga otteluiden overlayn. Esc sulkee.</p>
+        
+        {/* YKSINKERTAINEN - TOIMII KAIKILLA LAITTEILLA */}
+        <p 
+          onClick={() => {
+            setIsOverlayOpen((prev) => !prev);
+            if (!matchData) {
+              fetchLiveScore();
+            }
+          }}
+          style={{
+            cursor: 'pointer',
+            padding: '15px',
+            backgroundColor: 'rgba(0, 212, 255, 0.1)',
+            borderRadius: '8px',
+            border: '1px solid rgba(0, 212, 255, 0.3)',
+            fontSize: '16px',
+            fontWeight: '600',
+            userSelect: 'none',
+            transition: 'all 0.2s ease'
+          }}
+        >
+          👆 Klikkaa tätä tekstiä avataksesi FIFA karsinta-otteluiden JA Veikkausliiga otteluiden overlayn
+        </p>
+        
+        <p style={{ fontSize: '12px', opacity: 0.7, marginTop: '10px' }}>
+          Tai paina Ctrl+K tai tuplaklikkaa missä tahansa
+        </p>
       </header>
 
       {isOverlayOpen && (
