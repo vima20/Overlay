@@ -4,44 +4,72 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
   
   if (request.action === 'fetchChampionsLeague') {
     console.log('Background: Haetaan otteluita...');
-    console.log('Background: KORJATTU VERSIO - Vastataan aina!');
     
-    // Käytä suoraan fallback-dataa
-    console.log('Background: Käytetään fallback-dataa');
-    const fallbackMatches = [
-      {
-        id: 'fallback_hjk_inter',
-        homeTeam: { name: 'HJK' },
-        awayTeam: { name: 'FC Inter' },
-        score: { fullTime: { home: null, away: null } },
-        utcDate: (() => {
-          const matchDate = new Date();
-          matchDate.setMonth(9); // Lokakuu (0-indexed)
-          matchDate.setDate(26);
-          matchDate.setHours(16, 45, 0, 0);
-          return matchDate.toISOString();
-        })(),
-        status: 'SCHEDULED',
-        title: 'HJK vs FC Inter (Veikkausliiga)'
-      },
-      {
-        id: 'fallback_veikkausliiga_mestaruustaisto',
-        homeTeam: { name: 'Veikkausliiga' },
-        awayTeam: { name: 'Mestaruustaisto' },
-        score: { fullTime: { home: null, away: null } },
-        utcDate: (() => {
-          const matchDate = new Date();
-          matchDate.setMonth(10); // Marraskuu (0-indexed)
-          matchDate.setDate(9);
-          matchDate.setHours(14, 30, 0, 0);
-          return matchDate.toISOString();
-        })(),
-        status: 'SCHEDULED',
-        title: 'Veikkausliiga ottelu (Mestaruustaisto)'
+    (async () => {
+      try {
+        // 1) Kokeile ensin API-palvelinta (API-FOOTBALL integraatio)
+        console.log('Background: Kokeillaan API:a http://localhost:3000/api/football');
+        const apiResp = await fetch('http://localhost:3000/api/football', { 
+          method: 'GET',
+          headers: {
+            'Accept': 'application/json'
+          }
+        });
+        
+        if (apiResp.ok) {
+          const apiData = await apiResp.json();
+          if (apiData?.matches?.length > 0) {
+            console.log('Background: API palautti', apiData.matches.length, 'ottelua');
+            sendResponse({ success: true, data: { matches: apiData.matches } });
+            return;
+          } else {
+            console.log('Background: API palautti tyhjää dataa');
+          }
+        } else {
+          console.log('Background: API status:', apiResp.status);
+        }
+      } catch (e) {
+        console.log('Background: API-virhe:', e?.message || e);
       }
-    ];
-    console.log('Background: Palautetaan fallback-data:', fallbackMatches.length, 'ottelua');
-    sendResponse({ success: true, data: { matches: fallbackMatches } });
+
+      // 2) Jos API ei toimi, käytä fallback-dataa
+      console.log('Background: API ei toimi, käytetään fallback-dataa');
+      const fallbackMatches = [
+        {
+          id: 'fallback_hjk_inter',
+          homeTeam: { name: 'HJK' },
+          awayTeam: { name: 'FC Inter' },
+          score: { fullTime: { home: null, away: null } },
+          utcDate: (() => {
+            const matchDate = new Date();
+            matchDate.setMonth(9); // Lokakuu (0-indexed)
+            matchDate.setDate(26);
+            matchDate.setHours(16, 45, 0, 0);
+            return matchDate.toISOString();
+          })(),
+          status: 'SCHEDULED',
+          title: 'HJK vs FC Inter (Veikkausliiga)'
+        },
+        {
+          id: 'fallback_veikkausliiga_mestaruustaisto',
+          homeTeam: { name: 'Veikkausliiga' },
+          awayTeam: { name: 'Mestaruustaisto' },
+          score: { fullTime: { home: null, away: null } },
+          utcDate: (() => {
+            const matchDate = new Date();
+            matchDate.setMonth(10); // Marraskuu (0-indexed)
+            matchDate.setDate(9);
+            matchDate.setHours(14, 30, 0, 0);
+            return matchDate.toISOString();
+          })(),
+          status: 'SCHEDULED',
+          title: 'Veikkausliiga ottelu (Mestaruustaisto)'
+        }
+      ];
+      console.log('Background: Palautetaan fallback-data:', fallbackMatches.length, 'ottelua');
+      sendResponse({ success: true, data: { matches: fallbackMatches } });
+    })();
+
     return true; // jätä kanava auki async-vastausta varten
   }
 

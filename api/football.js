@@ -1,5 +1,52 @@
 export default async function handler(req, res) {
   try {
+    // 1) Kokeile ensin API-FOOTBALL (API-Sports) Veikkausliiga-ottelut
+    try {
+      const API_SPORTS_KEY = process.env.FOOTBALL_API_KEY || 'e0202adb25c89cbdcba0eb4e6c745860';
+      const VEIKKAUSLIIGA_LEAGUE_ID = process.env.FOOTBALL_LEAGUE_ID || '244'; // Veikkausliiga (API-Sports)
+      const season = process.env.FOOTBALL_SEASON || new Date().getFullYear();
+      const from = new Date().toISOString().split('T')[0];
+      const to = new Date(Date.now() + 14 * 24 * 60 * 60 * 1000).toISOString().split('T')[0];
+
+      console.log('API: Kokeillaan API-FOOTBALL:ia (API-Sports) avaimella, liiga:', VEIKKAUSLIIGA_LEAGUE_ID, 'kausi:', season, 'aikaväli:', from, '->', to);
+
+      const apiSportsResp = await fetch(`https://v3.football.api-sports.io/fixtures?league=${VEIKKAUSLIIGA_LEAGUE_ID}&season=${season}&from=${from}&to=${to}` , {
+        headers: {
+          'x-apisports-key': API_SPORTS_KEY,
+          'Accept': 'application/json'
+        }
+      });
+
+      if (apiSportsResp.ok) {
+        const apiSportsJson = await apiSportsResp.json();
+        const list = Array.isArray(apiSportsJson?.response) ? apiSportsJson.response : [];
+        console.log('API: API-FOOTBALL vastaus, otteluita:', list.length);
+
+        if (list.length > 0) {
+          const matches = list.map(item => ({
+            id: `apisports_${item.fixture?.id}`,
+            homeTeam: { name: item.teams?.home?.name || 'Home' },
+            awayTeam: { name: item.teams?.away?.name || 'Away' },
+            score: {
+              fullTime: {
+                home: item.goals?.home ?? null,
+                away: item.goals?.away ?? null
+              }
+            },
+            utcDate: item.fixture?.date,
+            status: (item.fixture?.status?.short === 'FT' || item.fixture?.status?.short === 'AET' || item.fixture?.status?.short === 'PEN') ? 'FINISHED' : 'SCHEDULED',
+            title: `${item.teams?.home?.name || 'Home'} vs ${item.teams?.away?.name || 'Away'} (Veikkausliiga)`
+          }));
+
+          return res.status(200).json({ matches });
+        }
+      } else {
+        console.log('API: API-FOOTBALL epäonnistui, status:', apiSportsResp.status);
+      }
+    } catch (e) {
+      console.log('API: API-FOOTBALL virhe:', e?.message || e);
+    }
+
     console.log('API: Haetaan Yle Areenan pelejä web scraping:lla...');
     
     // Kokeile ensin Yle Areenan web scraping:ta
