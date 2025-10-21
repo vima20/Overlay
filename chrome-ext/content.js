@@ -168,9 +168,9 @@
     updatePanel();
     
     try {
-        console.log('Content: Haetaan Veikkausliiga otteluita API-FOOTBALL:ista!');
+        console.log('Content: Haetaan Veikkausliiga otteluita API-FOOTBALL:ista (2025)!');
         console.log('Content: UUSI VERSIO LADATTU - CTRL+J TOIMII!');
-        console.log('Content: Käytetään API-FOOTBALL:ia ja fallback-dataa!');
+        console.log('Content: Käytetään API-FOOTBALL:ia suoraan ja fallback-dataa!');
       
       // TYHJENNÄ VANHA DATA
       matchData = null;
@@ -184,7 +184,7 @@
           month: '2-digit', 
           day: '2-digit' 
         }));
-        console.log('Content: Hakee API-FOOTBALL:ista Veikkausliiga-otteluita!');
+        console.log('Content: Hakee API-FOOTBALL:ista Veikkausliiga-otteluita (2025 kausi)!');
       
             // Lähetä viesti background scriptille (KORJATTU VERSIO)
             const response = await new Promise((resolve, reject) => {
@@ -319,7 +319,7 @@
             });
       
         if (response.matches && response.matches.length > 0) {
-          console.log('Content: Löytyi', response.matches.length, 'Veikkausliiga ottelua API-FOOTBALL:ista!');
+          console.log('Content: Löytyi', response.matches.length, 'Veikkausliiga ottelua API-FOOTBALL:ista (2025)!');
           console.log('Content: Ottelut:', response.matches.map(m => `${m.homeTeam.name} vs ${m.awayTeam.name}`).join(', '));
         
         // Luo HTML kaikille otteluille - KÄYTÄ EVENT LISTENERIÄ
@@ -367,7 +367,7 @@
         
         // Määritä otsikko ja alaotsikko
         let title = 'Veikkausliiga ottelut';
-        let subtitle = `API-FOOTBALL:ista haetut Veikkausliiga ottelut (${response.matches.length} kpl)`;
+        let subtitle = `API-FOOTBALL:ista haetut Veikkausliiga ottelut 2025 (${response.matches.length} kpl)`;
         let period = 'Veikkausliiga ottelut';
         
         matchData = {

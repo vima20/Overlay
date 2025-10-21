@@ -15,7 +15,7 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
         const from = new Date().toISOString().split('T')[0];
         const to = new Date(Date.now() + 14 * 24 * 60 * 60 * 1000).toISOString().split('T')[0];
         
-        const apiUrl = `https://v3.football.api-sports.io/fixtures?league=${VEIKKAUSLIIGA_LEAGUE_ID}&season=${season}&from=${from}&to=${to}`;
+        const apiUrl = `https://v3.football.api-sports.io/fixtures?league=${VEIKKAUSLIIGA_LEAGUE_ID}&season=${season}`;
         
         const apiResp = await fetch(apiUrl, { 
           method: 'GET',

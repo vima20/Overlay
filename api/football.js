@@ -1,10 +1,10 @@
-export default async function handler(req, res) {
+async function handler(req, res) {
   try {
     // 1) Kokeile ensin API-FOOTBALL (API-Sports) Veikkausliiga-ottelut
     try {
       const API_SPORTS_KEY = process.env.FOOTBALL_API_KEY || 'e0202adb25c89cbdcba0eb4e6c745860';
       const VEIKKAUSLIIGA_LEAGUE_ID = process.env.FOOTBALL_LEAGUE_ID || '244'; // Veikkausliiga (API-Sports)
-      const season = process.env.FOOTBALL_SEASON || new Date().getFullYear();
+        const season = process.env.FOOTBALL_SEASON || '2025'; // Käytä 2025 kautta
       const from = new Date().toISOString().split('T')[0];
       const to = new Date(Date.now() + 14 * 24 * 60 * 60 * 1000).toISOString().split('T')[0];
 
@@ -237,3 +237,5 @@ export default async function handler(req, res) {
     return res.status(500).json({ error: error.message });
   }
 }
+
+module.exports = handler;
