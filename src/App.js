@@ -44,8 +44,8 @@ function App() {
 
   // Suorat Areena-linkit Veikkausliiga-otteluille
   const STREAM_URLS = {
-    'HJK vs FC Inter': 'https://areena.yle.fi/tv/urheilu',
-    'Veikkausliiga vs Mestaruustaisto': 'https://areena.yle.fi/tv/urheilu'
+    'HJK vs FC Inter': 'https://areena.yle.fi/1-73014212',
+    'Veikkausliiga vs Mestaruustaisto': 'https://areena.yle.fi/1-73014211'
   };
 
   const fetchLiveScore = async () => {
