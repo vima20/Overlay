@@ -168,9 +168,9 @@
     updatePanel();
     
     try {
-        console.log('Content: Haetaan OIKEITA FIFA karsinta-otteluita JA Veikkausliiga otteluita Yle Areenasta!');
+        console.log('Content: Haetaan Veikkausliiga otteluita API-FOOTBALL:ista!');
         console.log('Content: UUSI VERSIO LADATTU - CTRL+J TOIMII!');
-        console.log('Content: Käytetään suoraan oikeita FIFA karsinta-otteluita JA Veikkausliiga otteluita!');
+        console.log('Content: Käytetään API-FOOTBALL:ia ja fallback-dataa!');
       
       // TYHJENNÄ VANHA DATA
       matchData = null;
@@ -178,14 +178,13 @@
       // Hae Yle Areenan otteluita (mukaan lukien Huuhkajat)
       const displayDate = new Date().toLocaleDateString('fi-FI');
       
-        console.log('Content: Haetaan FIFA karsinta-otteluita JA Veikkausliiga otteluita päivältä:', displayDate);
+        console.log('Content: Haetaan Veikkausliiga otteluita päivältä:', displayDate);
         console.log('Content: Täysi päivämäärä:', new Date().toLocaleDateString('fi-FI', { 
           year: 'numeric', 
           month: '2-digit', 
           day: '2-digit' 
         }));
-        console.log('Content: Hakee oikeita FIFA karsinta-otteluita: Suomi-Liettua ja Hollanti-Suomi!');
-        console.log('Content: Hakee oikeita Veikkausliiga otteluita: HJK-KuPS, VPS-HJK, Inter-HJK, SJK-HJK!');
+        console.log('Content: Hakee API-FOOTBALL:ista Veikkausliiga-otteluita!');
       
             // Lähetä viesti background scriptille (KORJATTU VERSIO)
             const response = await new Promise((resolve, reject) => {
@@ -320,7 +319,7 @@
             });
       
         if (response.matches && response.matches.length > 0) {
-          console.log('Content: Löytyi', response.matches.length, 'OIKEAA FIFA karsinta-ottelua JA Veikkausliiga otteluita!');
+          console.log('Content: Löytyi', response.matches.length, 'Veikkausliiga ottelua API-FOOTBALL:ista!');
           console.log('Content: Ottelut:', response.matches.map(m => `${m.homeTeam.name} vs ${m.awayTeam.name}`).join(', '));
         
         // Luo HTML kaikille otteluille - KÄYTÄ EVENT LISTENERIÄ
@@ -366,57 +365,10 @@
           `;
         });
         
-        // Tarkista onko FIFA karsinta-otteluita JA Veikkausliiga otteluita
-        const hasFifaKarsinta = response.matches.some(match => 
-          match.homeTeam.name.toLowerCase().includes('suomi') || 
-          match.awayTeam.name.toLowerCase().includes('suomi') ||
-          match.homeTeam.name.toLowerCase().includes('huuhkajat') || 
-          match.awayTeam.name.toLowerCase().includes('huuhkajat') ||
-          match.homeTeam.name.toLowerCase().includes('finland') || 
-          match.awayTeam.name.toLowerCase().includes('finland') ||
-          match.homeTeam.name.toLowerCase().includes('liettua') || 
-          match.awayTeam.name.toLowerCase().includes('liettua') ||
-          match.homeTeam.name.toLowerCase().includes('hollanti') || 
-          match.awayTeam.name.toLowerCase().includes('hollanti') ||
-          match.homeTeam.name.toLowerCase().includes('fin') || 
-          match.awayTeam.name.toLowerCase().includes('fin') ||
-          match.homeTeam.name.toLowerCase().includes('ltu') || 
-          match.awayTeam.name.toLowerCase().includes('ltu')
-        );
-        
-        const hasVeikkausliiga = response.matches.some(match => 
-          match.homeTeam.name.toLowerCase().includes('hjk') || 
-          match.awayTeam.name.toLowerCase().includes('hjk') ||
-          match.homeTeam.name.toLowerCase().includes('kups') || 
-          match.awayTeam.name.toLowerCase().includes('kups') ||
-          match.homeTeam.name.toLowerCase().includes('vps') || 
-          match.awayTeam.name.toLowerCase().includes('vps') ||
-          match.homeTeam.name.toLowerCase().includes('inter') || 
-          match.awayTeam.name.toLowerCase().includes('inter') ||
-          match.homeTeam.name.toLowerCase().includes('sjk') || 
-          match.awayTeam.name.toLowerCase().includes('sjk') ||
-          match.homeTeam.name.toLowerCase().includes('veikkausliiga') || 
-          match.awayTeam.name.toLowerCase().includes('veikkausliiga')
-        );
-        
         // Määritä otsikko ja alaotsikko
-        let title = 'FIFA Karsinta-ottelut';
-        let subtitle = `Oikeat FIFA karsinta-ottelut (${response.matches.length} kpl)`;
-        let period = 'FIFA Karsinta-ottelut';
-        
-        if (hasFifaKarsinta && hasVeikkausliiga) {
-          title = 'FIFA Karsinta-ottelut JA Veikkausliiga ottelut';
-          subtitle = `Oikeat FIFA karsinta-ottelut JA Veikkausliiga ottelut (${response.matches.length} kpl)`;
-          period = 'FIFA Karsinta-ottelut JA Veikkausliiga ottelut';
-        } else if (hasFifaKarsinta) {
-          title = 'FIFA Karsinta-ottelut (Suomi mukaan lukien)';
-          subtitle = `Oikeat FIFA karsinta-ottelut (${response.matches.length} kpl)`;
-          period = 'FIFA Karsinta-ottelut';
-        } else if (hasVeikkausliiga) {
-          title = 'Veikkausliiga ottelut';
-          subtitle = `Oikeat Veikkausliiga ottelut (${response.matches.length} kpl)`;
-          period = 'Veikkausliiga ottelut';
-        }
+        let title = 'Veikkausliiga ottelut';
+        let subtitle = `API-FOOTBALL:ista haetut Veikkausliiga ottelut (${response.matches.length} kpl)`;
+        let period = 'Veikkausliiga ottelut';
         
         matchData = {
           title: title,
@@ -432,7 +384,7 @@
           matches: response.matches // Tallenna ottelut
         };
       } else {
-          throw new Error('Ei FIFA karsinta-otteluita tai Veikkausliiga otteluita löytynyt');
+          throw new Error('Ei Veikkausliiga otteluita löytynyt');
       }
 
     } catch (error) {
