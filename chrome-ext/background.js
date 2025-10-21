@@ -7,29 +7,57 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
     
     (async () => {
       try {
-        // 1) Kokeile ensin API-palvelinta (API-FOOTBALL integraatio)
-        console.log('Background: Kokeillaan API:a http://localhost:3000/api/football');
-        const apiResp = await fetch('http://localhost:3000/api/football', { 
+        // 1) Kokeile ensin API-FOOTBALL:ia suoraan
+        console.log('Background: Kokeillaan API-FOOTBALL:ia suoraan');
+        const API_SPORTS_KEY = 'e0202adb25c89cbdcba0eb4e6c745860';
+        const VEIKKAUSLIIGA_LEAGUE_ID = '244';
+        const season = '2025';
+        const from = new Date().toISOString().split('T')[0];
+        const to = new Date(Date.now() + 14 * 24 * 60 * 60 * 1000).toISOString().split('T')[0];
+        
+        const apiUrl = `https://v3.football.api-sports.io/fixtures?league=${VEIKKAUSLIIGA_LEAGUE_ID}&season=${season}&from=${from}&to=${to}`;
+        
+        const apiResp = await fetch(apiUrl, { 
           method: 'GET',
           headers: {
+            'x-apisports-key': API_SPORTS_KEY,
             'Accept': 'application/json'
           }
         });
         
         if (apiResp.ok) {
           const apiData = await apiResp.json();
-          if (apiData?.matches?.length > 0) {
-            console.log('Background: API palautti', apiData.matches.length, 'ottelua');
-            sendResponse({ success: true, data: { matches: apiData.matches } });
+          const matches = Array.isArray(apiData?.response) ? apiData.response : [];
+          
+          if (matches.length > 0) {
+            console.log('Background: API-FOOTBALL palautti', matches.length, 'ottelua');
+            
+            // Muunna API-FOOTBALL data -> sovelluksen muotoon
+            const formattedMatches = matches.map(match => ({
+              id: `apisports_${match.fixture?.id}`,
+              homeTeam: { name: match.teams?.home?.name || 'Home' },
+              awayTeam: { name: match.teams?.away?.name || 'Away' },
+              score: {
+                fullTime: {
+                  home: match.goals?.home ?? null,
+                  away: match.goals?.away ?? null
+                }
+              },
+              utcDate: match.fixture?.date,
+              status: (match.fixture?.status?.short === 'FT' || match.fixture?.status?.short === 'AET' || match.fixture?.status?.short === 'PEN') ? 'FINISHED' : 'SCHEDULED',
+              title: `${match.teams?.home?.name || 'Home'} vs ${match.teams?.away?.name || 'Away'} (Veikkausliiga)`
+            }));
+            
+            sendResponse({ success: true, data: { matches: formattedMatches } });
             return;
           } else {
-            console.log('Background: API palautti tyhjää dataa');
+            console.log('Background: API-FOOTBALL palautti tyhjää dataa');
           }
         } else {
-          console.log('Background: API status:', apiResp.status);
+          console.log('Background: API-FOOTBALL status:', apiResp.status);
         }
       } catch (e) {
-        console.log('Background: API-virhe:', e?.message || e);
+        console.log('Background: API-FOOTBALL virhe:', e?.message || e);
       }
 
       // 2) Jos API ei toimi, käytä fallback-dataa
