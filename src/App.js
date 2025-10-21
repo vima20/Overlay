@@ -50,34 +50,60 @@ function App() {
 
   const fetchLiveScore = async () => {
     setLoading(true);
-    
+
     try {
-      console.log('App: Haetaan Veikkausliiga otteluita...');
-      
-      // Kokeile ensin API:a (jos backend on käynnissä)
+      console.log('App: Haetaan Veikkausliiga otteluita API-FOOTBALL:ista...');
+
+      // Kokeile ensin API-FOOTBALL:ia suoraan
       try {
-        console.log('App: Kokeillaan API:a http://localhost:3000/api/football');
-        const response = await fetch('http://localhost:3000/api/football', {
+        console.log('App: Kokeillaan API-FOOTBALL:ia suoraan');
+        const API_SPORTS_KEY = 'e0202adb25c89cbdcba0eb4e6c745860';
+        const VEIKKAUSLIIGA_LEAGUE_ID = '244';
+        const season = '2025';
+        const from = new Date().toISOString().split('T')[0];
+        const to = new Date(Date.now() + 14 * 24 * 60 * 60 * 1000).toISOString().split('T')[0];
+        
+        const apiUrl = `https://v3.football.api-sports.io/fixtures?league=${VEIKKAUSLIIGA_LEAGUE_ID}&season=${season}`;
+        
+        const response = await fetch(apiUrl, {
           method: 'GET',
           headers: {
+            'x-apisports-key': API_SPORTS_KEY,
             'Accept': 'application/json'
           }
         });
-        
+
         if (response.ok) {
           const data = await response.json();
-          console.log('App: API vastaus saatu:', data.matches?.length || 0, 'ottelua');
-          
-          if (data.matches && data.matches.length > 0) {
+          const matches = Array.isArray(data?.response) ? data.response : [];
+          console.log('App: API-FOOTBALL vastaus saatu:', matches.length, 'ottelua');
+
+          if (matches.length > 0) {
+            // Muunna API-FOOTBALL data -> sovelluksen muotoon
+            const formattedMatches = matches.map(match => ({
+              id: `apisports_${match.fixture?.id}`,
+              homeTeam: { name: match.teams?.home?.name || 'Home' },
+              awayTeam: { name: match.teams?.away?.name || 'Away' },
+              score: {
+                fullTime: {
+                  home: match.goals?.home ?? null,
+                  away: match.goals?.away ?? null
+                }
+              },
+              utcDate: match.fixture?.date,
+              status: (match.fixture?.status?.short === 'FT' || match.fixture?.status?.short === 'AET' || match.fixture?.status?.short === 'PEN') ? 'FINISHED' : 'SCHEDULED',
+              title: `${match.teams?.home?.name || 'Home'} vs ${match.teams?.away?.name || 'Away'} (Veikkausliiga)`
+            }));
+
             setMatchData({
-              title: "Veikkausliiga ottelut (API)",
-              subtitle: `API:sta haetut Veikkausliiga ottelut (${data.matches.length} kpl)`,
+              title: "Veikkausliiga ottelut (API-FOOTBALL)",
+              subtitle: `API-FOOTBALL:ista haetut Veikkausliiga ottelut (${formattedMatches.length} kpl)`,
               date: new Date().toLocaleDateString('fi-FI'),
-              matches: data.matches.map(match => ({
+              matches: formattedMatches.map(match => ({
                 id: match.id,
-                time: new Date(match.utcDate).toLocaleTimeString('fi-FI', { 
-                  hour: '2-digit', 
-                  minute: '2-digit' 
+                time: new Date(match.utcDate).toLocaleTimeString('fi-FI', {
+                  hour: '2-digit',
+                  minute: '2-digit'
                 }),
                 homeTeam: match.homeTeam.name,
                 awayTeam: match.awayTeam.name,
@@ -89,17 +115,17 @@ function App() {
             });
             return;
           } else {
-            console.log('App: API palautti tyhjää dataa');
+            console.log('App: API-FOOTBALL palautti tyhjää dataa');
           }
         } else {
-          console.log('App: API status:', response.status);
+          console.log('App: API-FOOTBALL status:', response.status);
         }
       } catch (apiError) {
-        console.log('App: API virhe:', apiError.message);
+        console.log('App: API-FOOTBALL virhe:', apiError.message);
       }
       
-      // Jos API ei toimi, käytä fallback-dataa - OIKEAT Veikkausliiga ottelut
-      console.log('App: API ei toimi, käytetään fallback-dataa');
+      // Jos API-FOOTBALL ei toimi, käytä fallback-dataa - OIKEAT Veikkausliiga ottelut
+      console.log('App: API-FOOTBALL ei toimi, käytetään fallback-dataa');
       const realMatches = [
         {
           id: 'veikkausliiga_hjk_inter',
@@ -133,9 +159,9 @@ function App() {
         }
       ];
       
-      setMatchData({
-        title: "Veikkausliiga ottelut (Fallback)",
-        subtitle: `Fallback Veikkausliiga ottelut (${realMatches.length} kpl)`,
+        setMatchData({
+          title: "Veikkausliiga ottelut (Fallback)",
+          subtitle: `Fallback Veikkausliiga ottelut (${realMatches.length} kpl) - API-FOOTBALL ei toiminut`,
         date: new Date().toLocaleDateString('fi-FI'),
         matches: realMatches.map(match => ({
           id: match.id,
