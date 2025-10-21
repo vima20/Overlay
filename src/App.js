@@ -54,11 +54,18 @@ function App() {
     setLoading(true);
     
     try {
-      console.log('App: Haetaan Veikkausliiga otteluita API:sta...');
+      console.log('App: Haetaan Veikkausliiga otteluita...');
       
-      // Kokeile ensin API:a
+      // Kokeile ensin API:a (jos backend on käynnissä)
       try {
-        const response = await fetch('/api/football');
+        console.log('App: Kokeillaan API:a http://localhost:3000/api/football');
+        const response = await fetch('http://localhost:3000/api/football', {
+          method: 'GET',
+          headers: {
+            'Accept': 'application/json'
+          }
+        });
+        
         if (response.ok) {
           const data = await response.json();
           console.log('App: API vastaus saatu:', data.matches?.length || 0, 'ottelua');
@@ -83,14 +90,18 @@ function App() {
               }))
             });
             return;
+          } else {
+            console.log('App: API palautti tyhjää dataa');
           }
+        } else {
+          console.log('App: API status:', response.status);
         }
       } catch (apiError) {
         console.log('App: API virhe:', apiError.message);
       }
       
-      // Jos API epäonnistui, käytä fallback-dataa - OIKEAT Veikkausliiga ottelut
-      console.log('App: API epäonnistui, käytetään fallback-dataa');
+      // Jos API ei toimi, käytä fallback-dataa - OIKEAT Veikkausliiga ottelut
+      console.log('App: API ei toimi, käytetään fallback-dataa');
       const realMatches = [
         {
           id: 'veikkausliiga_hjk_kups',
