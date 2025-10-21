@@ -42,10 +42,12 @@ function App() {
     return () => document.removeEventListener('touchstart', handleTouch);
   }, [matchData]);
 
-  // Suorat Areena-linkit
+  // Suorat Areena-linkit Veikkausliiga-otteluille
   const STREAM_URLS = {
-    'HJK vs FC Inter': 'https://areena.yle.fi/1-73014212',
-    'Veikkausliiga vs Mestaruustaisto': 'https://areena.yle.fi/1-73014211'
+    'HJK vs KuPS': 'https://areena.yle.fi/tv/urheilu',
+    'VPS vs HJK': 'https://areena.yle.fi/tv/urheilu',
+    'FC Inter vs HJK': 'https://areena.yle.fi/tv/urheilu',
+    'SJK vs HJK': 'https://areena.yle.fi/tv/urheilu'
   };
 
   const fetchLiveScore = async () => {
@@ -87,38 +89,68 @@ function App() {
         console.log('App: API virhe:', apiError.message);
       }
       
-      // Jos API epäonnistui, käytä fallback-dataa
+      // Jos API epäonnistui, käytä fallback-dataa - OIKEAT Veikkausliiga ottelut
       console.log('App: API epäonnistui, käytetään fallback-dataa');
       const realMatches = [
         {
-          id: 'veikkausliiga_1',
+          id: 'veikkausliiga_hjk_kups',
           homeTeam: { name: 'HJK' },
-          awayTeam: { name: 'FC Inter' },
+          awayTeam: { name: 'KuPS' },
           score: { fullTime: { home: null, away: null } },
           utcDate: (() => {
             const matchDate = new Date();
-            matchDate.setMonth(9);
+            matchDate.setMonth(9); // Lokakuu
             matchDate.setDate(26);
             matchDate.setHours(16, 45, 0, 0);
             return matchDate.toISOString();
           })(),
           status: 'SCHEDULED',
-          title: 'HJK vs FC Inter (Veikkausliiga)'
+          title: 'HJK vs KuPS (Veikkausliiga)'
         },
         {
-          id: 'veikkausliiga_2',
-          homeTeam: { name: 'Veikkausliiga' },
-          awayTeam: { name: 'Mestaruustaisto' },
+          id: 'veikkausliiga_vps_hjk',
+          homeTeam: { name: 'VPS' },
+          awayTeam: { name: 'HJK' },
           score: { fullTime: { home: null, away: null } },
           utcDate: (() => {
             const matchDate = new Date();
-            matchDate.setMonth(10);
+            matchDate.setMonth(10); // Marraskuu
             matchDate.setDate(9);
             matchDate.setHours(14, 30, 0, 0);
             return matchDate.toISOString();
           })(),
           status: 'SCHEDULED',
-          title: 'Veikkausliiga ottelu (Mestaruustaisto)'
+          title: 'VPS vs HJK (Veikkausliiga)'
+        },
+        {
+          id: 'veikkausliiga_inter_hjk',
+          homeTeam: { name: 'FC Inter' },
+          awayTeam: { name: 'HJK' },
+          score: { fullTime: { home: null, away: null } },
+          utcDate: (() => {
+            const matchDate = new Date();
+            matchDate.setMonth(10); // Marraskuu
+            matchDate.setDate(16);
+            matchDate.setHours(16, 30, 0, 0);
+            return matchDate.toISOString();
+          })(),
+          status: 'SCHEDULED',
+          title: 'FC Inter vs HJK (Veikkausliiga)'
+        },
+        {
+          id: 'veikkausliiga_sjk_hjk',
+          homeTeam: { name: 'SJK' },
+          awayTeam: { name: 'HJK' },
+          score: { fullTime: { home: null, away: null } },
+          utcDate: (() => {
+            const matchDate = new Date();
+            matchDate.setMonth(10); // Marraskuu
+            matchDate.setDate(23);
+            matchDate.setHours(15, 0, 0, 0);
+            return matchDate.toISOString();
+          })(),
+          status: 'SCHEDULED',
+          title: 'SJK vs HJK (Veikkausliiga)'
         }
       ];
       
@@ -174,11 +206,14 @@ function App() {
             transition: 'all 0.2s ease'
           }}
         >
-          👆 Klikkaa tätä tekstiä avataksesi FIFA karsinta-otteluiden JA Veikkausliiga otteluiden overlayn
+          👆 Klikkaa tätä tekstiä avataksesi Veikkausliiga-otteluiden overlayn
         </p>
         
         <p style={{ fontSize: '12px', opacity: 0.7, marginTop: '10px' }}>
           Tai paina Ctrl+K tai tuplaklikkaa missä tahansa
+        </p>
+        <p style={{ fontSize: '10px', opacity: 0.5, marginTop: '5px' }}>
+          Näyttää tulevat Veikkausliiga-ottelut (HJK, VPS, FC Inter, SJK, KuPS)
         </p>
       </header>
 
