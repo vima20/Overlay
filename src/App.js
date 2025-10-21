@@ -52,6 +52,43 @@ function App() {
     setLoading(true);
     
     try {
+      console.log('App: Haetaan Veikkausliiga otteluita API:sta...');
+      
+      // Kokeile ensin API:a
+      try {
+        const response = await fetch('/api/football');
+        if (response.ok) {
+          const data = await response.json();
+          console.log('App: API vastaus saatu:', data.matches?.length || 0, 'ottelua');
+          
+          if (data.matches && data.matches.length > 0) {
+            setMatchData({
+              title: "Veikkausliiga ottelut (API)",
+              subtitle: `API:sta haetut Veikkausliiga ottelut (${data.matches.length} kpl)`,
+              date: new Date().toLocaleDateString('fi-FI'),
+              matches: data.matches.map(match => ({
+                id: match.id,
+                time: new Date(match.utcDate).toLocaleTimeString('fi-FI', { 
+                  hour: '2-digit', 
+                  minute: '2-digit' 
+                }),
+                homeTeam: match.homeTeam.name,
+                awayTeam: match.awayTeam.name,
+                homeScore: match.score.fullTime?.home || '?',
+                awayScore: match.score.fullTime?.away || '?',
+                status: match.status,
+                streamUrl: STREAM_URLS[`${match.homeTeam.name} vs ${match.awayTeam.name}`] || 'https://areena.yle.fi/tv/urheilu'
+              }))
+            });
+            return;
+          }
+        }
+      } catch (apiError) {
+        console.log('App: API virhe:', apiError.message);
+      }
+      
+      // Jos API epäonnistui, käytä fallback-dataa
+      console.log('App: API epäonnistui, käytetään fallback-dataa');
       const realMatches = [
         {
           id: 'veikkausliiga_1',
@@ -86,8 +123,8 @@ function App() {
       ];
       
       setMatchData({
-        title: "FIFA Karsinta-ottelut JA Veikkausliiga ottelut",
-        subtitle: `Oikeat FIFA karsinta-ottelut JA Veikkausliiga ottelut (${realMatches.length} kpl)`,
+        title: "Veikkausliiga ottelut (Fallback)",
+        subtitle: `Fallback Veikkausliiga ottelut (${realMatches.length} kpl)`,
         date: new Date().toLocaleDateString('fi-FI'),
         matches: realMatches.map(match => ({
           id: match.id,
