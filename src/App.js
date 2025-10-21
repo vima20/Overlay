@@ -50,18 +50,16 @@ function App() {
 
   const fetchLiveScore = async () => {
     setLoading(true);
-
+    
     try {
       console.log('App: Haetaan Veikkausliiga otteluita API-FOOTBALL:ista...');
-
+      
       // Kokeile ensin API-FOOTBALL:ia suoraan
       try {
         console.log('App: Kokeillaan API-FOOTBALL:ia suoraan');
         const API_SPORTS_KEY = 'e0202adb25c89cbdcba0eb4e6c745860';
         const VEIKKAUSLIIGA_LEAGUE_ID = '244';
         const season = '2025';
-        const from = new Date().toISOString().split('T')[0];
-        const to = new Date(Date.now() + 14 * 24 * 60 * 60 * 1000).toISOString().split('T')[0];
         
         const apiUrl = `https://v3.football.api-sports.io/fixtures?league=${VEIKKAUSLIIGA_LEAGUE_ID}&season=${season}`;
         
@@ -72,12 +70,12 @@ function App() {
             'Accept': 'application/json'
           }
         });
-
+        
         if (response.ok) {
           const data = await response.json();
           const matches = Array.isArray(data?.response) ? data.response : [];
           console.log('App: API-FOOTBALL vastaus saatu:', matches.length, 'ottelua');
-
+          
           if (matches.length > 0) {
             // Muunna API-FOOTBALL data -> sovelluksen muotoon
             const formattedMatches = matches.map(match => ({
@@ -101,9 +99,9 @@ function App() {
               date: new Date().toLocaleDateString('fi-FI'),
               matches: formattedMatches.map(match => ({
                 id: match.id,
-                time: new Date(match.utcDate).toLocaleTimeString('fi-FI', {
-                  hour: '2-digit',
-                  minute: '2-digit'
+                time: new Date(match.utcDate).toLocaleTimeString('fi-FI', { 
+                  hour: '2-digit', 
+                  minute: '2-digit' 
                 }),
                 homeTeam: match.homeTeam.name,
                 awayTeam: match.awayTeam.name,
