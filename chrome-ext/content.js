@@ -171,6 +171,7 @@
         console.log('Content: Haetaan Veikkausliiga otteluita API-FOOTBALL:ista (2025)!');
         console.log('Content: UUSI VERSIO LADATTU - CTRL+J TOIMII!');
         console.log('Content: Käytetään API-FOOTBALL:ia suoraan ja fallback-dataa!');
+        console.log('Content: Aloitetaan otteluiden haku...');
       
       // TYHJENNÄ VANHA DATA
       matchData = null;
@@ -185,6 +186,7 @@
           day: '2-digit' 
         }));
         console.log('Content: Hakee API-FOOTBALL:ista Veikkausliiga-otteluita (2025 kausi)!');
+        console.log('Content: CORS-mode ja parannettu error handling käytössä!');
       
             // Lähetä viesti background scriptille (KORJATTU VERSIO)
             const response = await new Promise((resolve, reject) => {
@@ -320,6 +322,7 @@
       
         if (response.matches && response.matches.length > 0) {
           console.log('Content: Löytyi', response.matches.length, 'Veikkausliiga ottelua API-FOOTBALL:ista (2025)!');
+          console.log('Content: API-FOOTBALL toimii oikein!');
           console.log('Content: Ottelut:', response.matches.map(m => `${m.homeTeam.name} vs ${m.awayTeam.name}`).join(', '));
         
         // Luo HTML kaikille otteluille - KÄYTÄ EVENT LISTENERIÄ
@@ -389,6 +392,7 @@
 
     } catch (error) {
       console.error('Content: API-virhe:', error);
+      console.error('Content: Virhe yksityiskohdat:', error.message);
       
       // Näytä virheviesti
       matchData = {

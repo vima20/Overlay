@@ -50,6 +50,7 @@ function App() {
 
   const fetchLiveScore = async () => {
     setLoading(true);
+    console.log('App: Aloitetaan otteluiden haku...');
     
     try {
       console.log('App: Haetaan Veikkausliiga otteluita API-FOOTBALL:ista...');
@@ -65,9 +66,11 @@ function App() {
         
         const response = await fetch(apiUrl, {
           method: 'GET',
+          mode: 'cors',
           headers: {
             'x-apisports-key': API_SPORTS_KEY,
-            'Accept': 'application/json'
+            'Accept': 'application/json',
+            'Content-Type': 'application/json'
           }
         });
         
@@ -119,7 +122,8 @@ function App() {
           console.log('App: API-FOOTBALL status:', response.status);
         }
       } catch (apiError) {
-        console.log('App: API-FOOTBALL virhe:', apiError.message);
+        console.error('App: API-FOOTBALL virhe:', apiError.message);
+        console.error('App: Virhe yksityiskohdat:', apiError);
       }
       
       // Jos API-FOOTBALL ei toimi, käytä fallback-dataa - OIKEAT Veikkausliiga ottelut

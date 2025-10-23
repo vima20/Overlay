@@ -19,9 +19,11 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
         
         const apiResp = await fetch(apiUrl, { 
           method: 'GET',
+          mode: 'cors',
           headers: {
             'x-apisports-key': API_SPORTS_KEY,
-            'Accept': 'application/json'
+            'Accept': 'application/json',
+            'Content-Type': 'application/json'
           }
         });
         
